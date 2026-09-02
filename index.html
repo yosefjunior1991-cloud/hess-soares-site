@@ -107,6 +107,9 @@
   --font-sans:'Inter',system-ui,-apple-system,sans-serif;
   --whatsapp:#25D366;
   --whatsapp-dark:#20BA5A;
+  --bg-glass:rgba(21,23,30,.48);
+  --bg-soft-glass:rgba(18,20,26,.48);
+  --card-glass:rgba(27,30,39,.55);
 }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -165,7 +168,7 @@ header.masthead{
   background:transparent; padding:22px 0; transition:background .4s ease,padding .4s ease,border-color .4s ease;
   border-bottom:1px solid transparent;
 }
-header.masthead.scrolled{background:rgba(21,23,30,.94); backdrop-filter:blur(10px); padding:12px 0; border-color:var(--border);}
+header.masthead.scrolled{background:rgba(21,23,30,.94); backdrop-filter:blur(5px); padding:12px 0; border-color:var(--border);}
 .masthead-inner{display:flex; align-items:center; justify-content:space-between; gap:20px;}
 .brand img{height:38px; width:auto;}
 nav.primary{display:flex; align-items:center; gap:34px;}
@@ -184,11 +187,12 @@ nav.primary a:hover, nav.primary a.active{color:var(--gold);}
 .mobile-menu a{padding:12px 0; font-size:.95rem; letter-spacing:.04em; text-transform:uppercase; color:var(--fg); border-bottom:1px solid var(--border);}
 .mobile-menu .head-cta{display:flex; margin-top:14px; justify-content:center;}
 
-/* ---------- hero / scroll background ---------- */
-.hero-stage{position:relative; height:230vh;}
-.hero-sticky{position:sticky; top:0; height:100vh; min-height:600px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#0c0d10;}
-.hero-canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
-.hero-overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(12,13,16,.55) 0%,rgba(12,13,16,.55) 40%,rgba(12,13,16,.92) 100%); z-index:1;}
+/* ---------- fixed animated background (frame sequence, whole site) ---------- */
+#bgCanvas{position:fixed; inset:0; width:100vw; height:100vh; z-index:-1; display:block; background:#0c0d10;}
+
+/* ---------- hero ---------- */
+.hero{position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+.hero-overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(12,13,16,.3) 0%,rgba(12,13,16,.32) 55%,rgba(12,13,16,.6) 100%); z-index:1;}
 .hero-decor{position:absolute; width:1px; height:130px; background:linear-gradient(180deg,transparent,rgba(198,154,79,.5),transparent); z-index:1;}
 .hero-decor-l{top:120px; left:48px;}
 .hero-decor-r{bottom:120px; right:48px;}
@@ -207,7 +211,7 @@ nav.primary a:hover, nav.primary a.active{color:var(--gold);}
 
 /* ---------- about ---------- */
 section{padding:96px 0;}
-.about{background:var(--card);}
+.about{background:var(--card-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;}
 @media (max-width:940px){.about-grid{grid-template-columns:1fr; gap:40px;}}
 .about-copy .kicker{display:flex; align-items:center; gap:14px; margin-bottom:20px;}
@@ -215,27 +219,27 @@ section{padding:96px 0;}
 .about-copy .kicker span{color:var(--gold); font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600;}
 .about-copy h2{font-size:clamp(1.9rem,3.6vw,2.8rem); margin-bottom:26px;}
 .about-copy p{color:var(--muted); line-height:1.75; margin:0 0 20px;}
-.quote-card{display:flex; gap:18px; align-items:center; padding:22px; background:var(--bg); border:1px solid var(--border); margin-top:8px;}
+.quote-card{display:flex; gap:18px; align-items:center; padding:22px; background:var(--bg-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border); margin-top:8px;}
 .quote-card img{width:52px; height:auto; opacity:.85; flex:none;}
 .quote-card p{color:var(--fg); font-family:var(--font-serif); font-style:italic; font-size:1.15rem; margin:0;}
 .quote-card cite{color:var(--muted); font-size:.85rem; font-style:normal; display:block; margin-top:6px;}
 .values{display:flex; flex-direction:column; gap:18px;}
-.value-card{display:flex; gap:22px; padding:28px; background:var(--bg); border:1px solid var(--border); transition:border-color .3s ease;}
+.value-card{display:flex; gap:22px; padding:28px; background:var(--bg-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border); transition:border-color .3s ease;}
 .value-card:hover{border-color:rgba(198,154,79,.4);}
 .value-icon{flex:none; width:52px; height:52px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(198,154,79,.35); color:var(--gold);}
 .value-card h3{font-size:1.3rem; margin-bottom:8px;}
 .value-card p{color:var(--muted); font-size:.94rem; line-height:1.6; margin:0;}
 
 /* ---------- team ---------- */
-.team{background:var(--bg-soft);}
+.team{background:var(--bg-soft-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .team-tabs{max-width:920px; margin:0 auto;}
-.tab-list{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--border); background:var(--card); margin-bottom:32px;}
+.tab-list{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--border); background:var(--card-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); margin-bottom:32px;}
 .tab-btn{padding:16px 10px; font-size:.85rem; font-weight:600; letter-spacing:.04em; background:transparent; border:none; color:var(--muted); cursor:pointer; transition:background .25s ease,color .25s ease;}
 .tab-btn.active{background:var(--gradient-gold); color:#1a140a;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block; animation:fadeIn .4s ease;}
 @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
-.lawyer-card{background:var(--card); border:1px solid var(--border); padding:clamp(24px,4vw,48px); display:grid; grid-template-columns:220px 1fr; gap:40px;}
+.lawyer-card{background:var(--card-glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border:1px solid var(--border); padding:clamp(24px,4vw,48px); display:grid; grid-template-columns:220px 1fr; gap:40px;}
 @media (max-width:760px){.lawyer-card{grid-template-columns:1fr; text-align:center;}}
 .lawyer-photo{width:100%; aspect-ratio:1; overflow:hidden; border:1px solid rgba(198,154,79,.3); margin-bottom:18px;}
 .lawyer-photo img{width:100%; height:100%; object-fit:cover;}
@@ -249,10 +253,11 @@ section{padding:96px 0;}
 .tag{padding:8px 14px; background:rgba(198,154,79,.08); border:1px solid rgba(198,154,79,.22); color:var(--fg); font-size:.82rem;}
 
 /* ---------- practice areas ---------- */
+#areas{background:var(--bg-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .areas-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 @media (max-width:940px){.areas-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:640px){.areas-grid{grid-template-columns:1fr;}}
-.area-card{position:relative; padding:32px; background:var(--card); border:1px solid var(--border); transition:border-color .4s ease; overflow:hidden; cursor:pointer;}
+.area-card{position:relative; padding:32px; background:var(--card-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border); transition:border-color .4s ease; overflow:hidden; cursor:pointer;}
 .area-card:hover{border-color:rgba(198,154,79,.45);}
 .area-icon{width:54px; height:54px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(198,154,79,.3); color:var(--gold); margin-bottom:22px;}
 .area-card h3{font-size:1.3rem; margin-bottom:12px;}
@@ -260,21 +265,22 @@ section{padding:96px 0;}
 .area-more{margin-top:20px; padding-top:20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; color:var(--gold); font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600; background:none; border-left:none; border-right:none; border-bottom:none; cursor:pointer;}
 
 /* ---------- reviews ---------- */
-.reviews{background:var(--bg-soft);}
+.reviews{background:var(--bg-soft-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .rating-row{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:44px; flex-wrap:wrap;}
 .stars{color:var(--gold); font-size:1.3rem; letter-spacing:2px;}
 .rating-num{font-family:var(--font-serif); font-size:1.6rem; color:var(--fg);}
 .rating-count{color:var(--muted); font-size:.92rem;}
 .reviews-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:920px; margin:0 auto;}
 @media (max-width:760px){.reviews-grid{grid-template-columns:1fr;}}
-.review-card{background:var(--card); border:1px solid var(--border); padding:26px;}
+.review-card{background:var(--card-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border); padding:26px;}
 .review-card .stars{font-size:.95rem; margin-bottom:14px; display:block;}
 .review-card p{color:var(--fg); line-height:1.6; margin:0 0 14px; font-size:.98rem;}
 .review-card footer{color:var(--muted); font-size:.78rem; letter-spacing:.04em; text-transform:uppercase;}
 
 /* ---------- faq ---------- */
+#faq{background:var(--bg-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .faq-list{max-width:820px; margin:0 auto; display:flex; flex-direction:column; gap:2px;}
-.faq-item{background:var(--card); border:1px solid var(--border);}
+.faq-item{background:var(--card-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border);}
 .faq-item summary{padding:20px 24px; cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:16px; font-family:var(--font-serif); font-size:1.08rem; color:var(--fg);}
 .faq-item summary::-webkit-details-marker{display:none;}
 .faq-item summary::after{content:"+"; color:var(--gold); font-size:1.3rem; flex:none; font-family:var(--font-sans);}
@@ -283,20 +289,20 @@ section{padding:96px 0;}
 .faq-item p{margin:0; padding:0 24px 22px; color:var(--muted); line-height:1.7; font-size:.96rem;}
 
 /* ---------- contact ---------- */
-.contact{background:var(--card);}
+.contact{background:var(--card-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .contact-cta{text-align:center; max-width:680px; margin:0 auto 52px;}
 .contact-cta p{color:var(--muted); font-size:1.08rem; margin-bottom:30px;}
 .contact-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
 .contact-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; max-width:1040px; margin:0 auto;}
 @media (max-width:900px){.contact-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:520px){.contact-grid{grid-template-columns:1fr;}}
-.contact-card{display:flex; flex-direction:column; align-items:center; text-align:center; padding:28px 20px; background:var(--bg); border:1px solid var(--border);}
+.contact-card{display:flex; flex-direction:column; align-items:center; text-align:center; padding:28px 20px; background:var(--bg-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border);}
 .contact-card .ic{width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(198,154,79,.3); color:var(--gold); margin-bottom:14px;}
 .contact-card h4{font-size:1.05rem; margin-bottom:8px;}
 .contact-card p{color:var(--muted); font-size:.88rem; line-height:1.6; margin:0; white-space:pre-line;}
 
 /* ---------- footer ---------- */
-footer.site{background:var(--bg-soft); border-top:1px solid var(--border); padding:70px 0 0;}
+footer.site{background:var(--bg-soft-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); border-top:1px solid var(--border); padding:70px 0 0;}
 .foot-grid{display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:48px; margin-bottom:50px;}
 @media (max-width:820px){.foot-grid{grid-template-columns:1fr; gap:36px;}}
 .foot-brand img{height:42px; margin-bottom:20px;}
@@ -421,27 +427,26 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
   <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.61-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.14.14-.29.29-.13.57.17.29.75 1.24 1.61 2 1.11.99 2.04 1.3 2.33 1.44.29.15.46.13.63-.07.17-.2.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.65.78 1.94.92.29.14.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>
 </a>
 
+<canvas id="bgCanvas" data-frames="240" data-path="frame_" data-ext="webp" aria-hidden="true"></canvas>
+
 <main id="top">
 
-<section class="hero-stage" id="inicio" data-frames="120" data-path="frame_" data-ext="webp">
-  <div class="hero-sticky">
-    <canvas class="hero-canvas" id="heroCanvas"></canvas>
-    <div class="hero-overlay"></div>
-    <div class="hero-decor hero-decor-l"></div>
-    <div class="hero-decor hero-decor-r"></div>
-    <div class="hero-content">
-      <p class="eyebrow" style="justify-content:center;">Excelência Jurídica</p>
-      <h1>Defendemos seus <span class="gold-text">direitos</span> com <em style="font-style:italic;">compromisso</em> e <span class="gold-text">dedicação</span></h1>
-      <p class="lede">Com mais de 10 anos de sólida experiência na atividade extrajudicial, aliados a mais de 7 anos de atuação técnica e estratégica nas esferas judiciais, os profissionais construíram ampla vivência na condução e elaboração de procedimentos e processos judiciais, com pleno domínio das rotinas forenses e da prática processual.</p>
-      <div class="hero-actions">
-        <button type="button" class="btn btn-gold" data-quiz-open>Agende uma Consulta</button>
-        <a class="btn btn-outline" href="#areas">Nossas Áreas</a>
-      </div>
+<section class="hero" id="inicio">
+  <div class="hero-overlay"></div>
+  <div class="hero-decor hero-decor-l"></div>
+  <div class="hero-decor hero-decor-r"></div>
+  <div class="hero-content">
+    <p class="eyebrow" style="justify-content:center;">Excelência Jurídica</p>
+    <h1>Defendemos seus <span class="gold-text">direitos</span> com <em style="font-style:italic;">compromisso</em> e <span class="gold-text">dedicação</span></h1>
+    <p class="lede">Com mais de 10 anos de sólida experiência na atividade extrajudicial, aliados a mais de 7 anos de atuação técnica e estratégica nas esferas judiciais, os profissionais construíram ampla vivência na condução e elaboração de procedimentos e processos judiciais, com pleno domínio das rotinas forenses e da prática processual.</p>
+    <div class="hero-actions">
+      <button type="button" class="btn btn-gold" data-quiz-open>Agende uma Consulta</button>
+      <a class="btn btn-outline" href="#areas">Nossas Áreas</a>
     </div>
-    <a href="#sobre" class="hero-scroll" aria-label="Rolar para baixo">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6"/></svg>
-    </a>
   </div>
+  <a href="#sobre" class="hero-scroll" aria-label="Rolar para baixo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6"/></svg>
+  </a>
 </section>
 
 <section class="about" id="sobre">
@@ -796,14 +801,13 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
   });
 });
 
-/* ---------- scroll-scrubbed hero background (frame sequence) ---------- */
+/* ---------- scroll-scrubbed background, fixed behind the whole page (frame sequence) ---------- */
 (function(){
-  var stage = document.querySelector('.hero-stage');
-  var canvas = document.getElementById('heroCanvas');
-  if(!stage || !canvas) return;
-  var total = parseInt(stage.dataset.frames, 10) || 0;
-  var basePath = stage.dataset.path || '';
-  var ext = stage.dataset.ext || 'webp';
+  var canvas = document.getElementById('bgCanvas');
+  if(!canvas) return;
+  var total = parseInt(canvas.dataset.frames, 10) || 0;
+  var basePath = canvas.dataset.path || '';
+  var ext = canvas.dataset.ext || 'webp';
   var ctx = canvas.getContext('2d');
   var images = new Array(total);
   var currentIndex = 0;
@@ -816,8 +820,8 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
     var img = images[i];
     if(!img || !img.complete || img.naturalWidth === 0) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var vw = canvas.parentElement.clientWidth;
-    var vh = canvas.parentElement.clientHeight;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
     var scale = Math.max(vw / img.naturalWidth, vh / img.naturalHeight);
     var w = img.naturalWidth * scale;
     var h = img.naturalHeight * scale;
@@ -833,9 +837,9 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
   }
 
   function onScroll(){
-    var rect = stage.getBoundingClientRect();
-    var scrollable = stage.offsetHeight - window.innerHeight;
-    var progress = scrollable > 0 ? -rect.top / scrollable : 0;
+    var doc = document.documentElement;
+    var scrollable = doc.scrollHeight - window.innerHeight;
+    var progress = scrollable > 0 ? window.scrollY / scrollable : 0;
     progress = Math.max(0, Math.min(1, progress));
     var idx = Math.min(total - 1, Math.floor(progress * total));
     currentIndex = idx;
@@ -858,12 +862,13 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
     }
     window.addEventListener('scroll', onScroll, {passive:true});
   } else {
-    // reduced motion: show the final (fully revealed) frame, static
-    images[total-1] = new Image();
-    images[total-1].onload = function(){ currentIndex = total-1; drawFrame(total-1); };
-    images[total-1].src = frameUrl(total-1);
+    // reduced motion: show a static mid-sequence frame instead of scroll-linked animation
+    var staticIdx = Math.floor(total / 2);
+    images[staticIdx] = new Image();
+    images[staticIdx].onload = function(){ currentIndex = staticIdx; drawFrame(staticIdx); };
+    images[staticIdx].src = frameUrl(staticIdx);
   }
-  window.addEventListener('resize', function(){ drawFrame(currentIndex); });
+  window.addEventListener('resize', function(){ onScroll(); });
 })();
 
 /* ---------- quizz de qualificação ---------- */
