@@ -198,15 +198,18 @@ nav.primary a:hover, nav.primary a.active{color:var(--gold);}
 
 /* ---------- hero ---------- */
 .hero{position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;}
-.hero-overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(12,13,16,.3) 0%,rgba(12,13,16,.32) 55%,rgba(12,13,16,.6) 100%); z-index:1;}
+.hero-overlay{position:absolute; inset:0; background:
+  radial-gradient(ellipse 920px 640px at 50% 46%, rgba(9,10,13,.74) 0%, rgba(9,10,13,.52) 45%, rgba(9,10,13,.22) 74%, transparent 100%),
+  linear-gradient(180deg,rgba(12,13,16,.42) 0%,rgba(12,13,16,.46) 55%,rgba(12,13,16,.74) 100%);
+  z-index:1;}
 .hero-decor{position:absolute; width:1px; height:130px; background:linear-gradient(180deg,transparent,rgba(198,154,79,.5),transparent); z-index:1;}
 .hero-decor-l{top:120px; left:48px;}
 .hero-decor-r{bottom:120px; right:48px;}
 @media (max-width:900px){.hero-decor{display:none;}}
 .hero-content{position:relative; z-index:2; text-align:center; max-width:900px; margin:0 auto; padding:0 clamp(20px,5vw,48px);}
 .hero-content .eyebrow{justify-content:center;}
-.hero-content h1{font-size:clamp(2.1rem,5.6vw,4.4rem); margin-bottom:26px;}
-.hero-content .lede{color:rgba(236,231,218,.82); font-size:clamp(1rem,1.6vw,1.2rem); font-weight:300; max-width:640px; margin:0 auto 40px; line-height:1.7;}
+.hero-content h1{font-size:clamp(2.1rem,5.6vw,4.4rem); margin-bottom:26px; text-shadow:0 2px 24px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.65);}
+.hero-content .lede{color:rgba(240,236,226,.94); font-size:clamp(1rem,1.6vw,1.2rem); font-weight:300; max-width:640px; margin:0 auto 40px; line-height:1.7; text-shadow:0 2px 16px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.6);}
 .hero-actions{display:flex; flex-wrap:wrap; gap:14px; justify-content:center;}
 .hero-scroll{position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:2; color:var(--gold); animation:bounce 2s infinite;}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(8px);}}
