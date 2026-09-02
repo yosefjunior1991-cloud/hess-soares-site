@@ -1,0 +1,25 @@
+# Hess e Soares Advogados
+
+> Escritório de advocacia com unidades em Blumenau e Barra Velha (SC, Brasil), atuando em Direito Civil, Imobiliário, Família, Sucessões, Empresarial, Previdenciário, Penal e Trabalhista. Atendimento presencial e por telefone, WhatsApp e videochamada em toda a região do Vale Europeu, Vale do Itajaí e Litoral Norte de Santa Catarina.
+
+Site institucional de página única (single-page). Todo o conteúdo está em https://hessesoares.com.br/, organizado nas seções abaixo (âncoras da mesma página).
+
+## Principal
+
+- [Início](https://hessesoares.com.br/#inicio): Apresentação do escritório e chamada para agendamento de consulta.
+- [Áreas de atuação](https://hessesoares.com.br/#areas): Direito Civil, Imobiliário, Família, Sucessões, Empresarial, Previdenciário, Penal e Trabalhista.
+- [Sobre nós](https://hessesoares.com.br/#sobre): História do escritório e equipe de advogados.
+- [Perguntas frequentes](https://hessesoares.com.br/#faq): Dúvidas comuns sobre inventário, revisão de aposentadoria/INSS, regularização de imóveis, verbas rescisórias e partilha de bens em divórcio.
+- [Contato](https://hessesoares.com.br/#contato): Endereços, telefone e formas de agendamento das duas unidades (Blumenau e Barra Velha).
+
+## Dados de contato
+
+- Telefone/WhatsApp: +55 47 99244-9912
+- E-mail: hsadvogados@outlook.com.br
+- Unidade Blumenau: Av. Dois de Setembro, nº 2.700, SL 04, Bairro Itoupava Norte, Blumenau/SC
+- Unidade Barra Velha: R. Ludovico Caeteno, 199, Itajubá II, Barra Velha/SC
+- Horário: segunda a sexta, 09:00–18:00
+
+## Optional
+
+- [Dados estruturados (JSON-LD)](https://hessesoares.com.br/#inicio): Schema.org LegalService e FAQPage com detalhes completos de endereço, equipe, avaliações e perguntas frequentes — ver `<script type="application/ld+json">` no HTML da página.

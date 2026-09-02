@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hess-soares-site.pages.dev/sitemap.xml
+Sitemap: https://hessesoares.com.br/sitemap.xml

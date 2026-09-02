@@ -6,19 +6,19 @@
 <title>Hess e Soares Advogados | Blumenau e Barra Velha, SC</title>
 <meta name="description" content="Advocacia em Blumenau e Barra Velha (SC): Imóveis, família, herança, INSS, civil e trabalhista. Avaliação 5,0 no Google. Agende sua consulta.">
 <meta name="author" content="Hess e Soares Advogados">
-<link rel="canonical" href="https://hess-soares-site.pages.dev/">
+<link rel="canonical" href="https://hessesoares.com.br/">
 <link rel="icon" href="./favicon.ico" sizes="any">
 
 <meta property="og:title" content="Hess e Soares Advogados | Blumenau e Barra Velha, SC">
 <meta property="og:description" content="Advocacia em Blumenau e Barra Velha (SC): Imóveis, família, herança, INSS, civil e trabalhista. Avaliação 5,0 no Google.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:url" content="https://hess-soares-site.pages.dev/">
-<meta property="og:image" content="https://hess-soares-site.pages.dev/og-image.jpg">
+<meta property="og:url" content="https://hessesoares.com.br/">
+<meta property="og:image" content="https://hessesoares.com.br/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hess-soares-site.pages.dev/og-image.jpg">
+<meta name="twitter:image" content="https://hessesoares.com.br/og-image.jpg">
 
 <script type="application/ld+json">
 {
@@ -101,7 +101,10 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="bg-hero.webp" fetchpriority="high" media="(min-width: 769px)">
+<link rel="preload" as="image" href="bg-hero-mobile.webp" fetchpriority="high" media="(max-width: 768px)">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
 
 <style>
 /* ---------- tokens ---------- */
@@ -201,8 +204,11 @@ nav.primary a:hover, nav.primary a.active{color:var(--gold);}
 .mobile-menu a{padding:12px 0; font-size:.95rem; letter-spacing:.04em; text-transform:uppercase; color:var(--fg); border-bottom:1px solid var(--border);}
 .mobile-menu .head-cta{display:flex; margin-top:14px; justify-content:center;}
 
-/* ---------- fixed animated background (frame sequence, whole site) ---------- */
+/* ---------- fixed background ---------- */
 #bgFixed{position:fixed; inset:0; z-index:-1; background:url('bg-hero.webp') center/cover no-repeat, #0c0d10;}
+@media (max-width: 768px){
+  #bgFixed{background-image:url('bg-hero-mobile.webp');}
+}
 
 /* ---------- hero ---------- */
 .hero{position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;}
@@ -394,7 +400,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
 
 <header class="masthead" id="masthead">
   <div class="wrap masthead-inner">
-    <a href="#inicio" class="brand"><img src="logo.png" alt="Hess e Soares Advogados"></a>
+    <a href="#inicio" class="brand"><img src="logo.png" alt="Hess e Soares Advogados" width="316" height="120" fetchpriority="high"></a>
     <nav class="primary">
       <a href="#inicio">Início</a>
       <a href="#sobre">O Escritório</a>
@@ -474,7 +480,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
       <p><strong style="color:var(--fg);">Hess e Soares Advogados</strong> nasceu da união de profissionais experientes e dedicados, com o objetivo de oferecer assessoria jurídica de excelência.</p>
       <p>Atuamos de forma consultiva e contenciosa em diversas áreas do Direito, sempre buscando as melhores soluções para cada caso. Nossa equipe está preparada para atender pessoas físicas e jurídicas, com agilidade, transparência e comprometimento — em Blumenau, Barra Velha e em toda a região do Vale Europeu e do Vale do Itajaí.</p>
       <div class="quote-card">
-        <img src="logo.png" alt="HS">
+        <img src="logo.png" alt="HS" width="316" height="120" loading="lazy" decoding="async">
         <div>
           <p>"Tudo o que a sua mão encontrar para fazer, faça-o com todo o seu coração."</p>
           <cite>— Salomão</cite>
@@ -515,7 +521,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
       <div class="tab-panel active" id="tab-elton">
         <div class="lawyer-card">
           <div class="lawyer-photo-col">
-            <div class="lawyer-photo"><img src="elton.jpg" alt="Foto de Elton Hess" style="object-position:center 20%;"></div>
+            <div class="lawyer-photo"><img src="elton.jpg" alt="Foto de Elton Hess" width="700" height="1050" style="object-position:center 20%;" loading="lazy" decoding="async"></div>
             <h3>Elton Hess</h3>
             <p class="role">Advogado Sócio</p>
             <p class="oab">OAB/SC 52.635</p>
@@ -537,7 +543,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
       <div class="tab-panel" id="tab-nilton">
         <div class="lawyer-card">
           <div class="lawyer-photo-col">
-            <div class="lawyer-photo"><img src="nilton.jpg" alt="Foto de Nilton Soares" style="object-position:top;"></div>
+            <div class="lawyer-photo"><img src="nilton.jpg" alt="Foto de Nilton Soares" width="700" height="1050" style="object-position:top;" loading="lazy" decoding="async"></div>
             <h3>Nilton Soares</h3>
             <p class="role">Advogado Sócio</p>
             <p class="oab">OAB/SC 54.436</p>
@@ -559,7 +565,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
       <div class="tab-panel" id="tab-pamela">
         <div class="lawyer-card">
           <div class="lawyer-photo-col">
-            <div class="lawyer-photo"><img src="pamela.jpg" alt="Foto de Pamela Soares" style="object-position:top;"></div>
+            <div class="lawyer-photo"><img src="pamela.jpg" alt="Foto de Pamela Soares" width="700" height="467" style="object-position:top;" loading="lazy" decoding="async"></div>
             <h3>Pamela M. R. Soares</h3>
             <p class="role">Advogada Associada</p>
             <p class="oab">OAB/SC 63.070</p>
@@ -760,7 +766,7 @@ Barra Velha/SC, CEP 88.390-000</p>
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <img src="logo.png" alt="Hess e Soares Advogados">
+        <img src="logo.png" alt="Hess e Soares Advogados" width="316" height="120" loading="lazy" decoding="async">
         <p>Escritório de advocacia comprometido com a prestação de serviços jurídicos eficientes e responsáveis, pautados na ética, na transparência e na defesa dos interesses de seus clientes.</p>
         <div class="social-row">
           <a href="https://www.instagram.com/hess_e_soares" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
