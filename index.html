@@ -258,7 +258,7 @@ section{padding:96px 0;}
 .team-tabs{margin:0 auto;}
 .team-stage{position:relative; overflow:hidden; touch-action:pan-y; cursor:grab; -webkit-user-select:none; user-select:none; transition:height .5s cubic-bezier(.22,.61,.36,1);}
 .team-stage.dragging{cursor:grabbing;}
-.team-card{position:absolute; top:0; left:50%; width:min(760px, 100%); padding:26px 0; transition:transform .55s cubic-bezier(.22,.61,.36,1), opacity .45s ease;}
+.team-card{position:absolute; top:0; left:50%; width:min(600px, 84%); padding:26px 0; transition:transform .55s cubic-bezier(.22,.61,.36,1), opacity .45s ease;}
 .team-stage.dragging .team-card{transition:opacity .45s ease;}
 .team-card:not(.active){cursor:pointer;}
 .team-card:not(.active) .lawyer-card{pointer-events:none;}
@@ -266,12 +266,18 @@ section{padding:96px 0;}
 .team-card.active .lawyer-card{border-color:var(--gold); box-shadow:0 26px 60px -22px rgba(198,154,79,.5);}
 .team-card:focus-visible{outline:none;}
 .team-card:focus-visible .lawyer-card{outline:2px solid var(--gold); outline-offset:3px;}
-.team-nav{display:flex; justify-content:center; gap:12px; margin:8px 0 0;}
-.team-nav-btn{width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--card); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s ease, color .2s ease;}
+.team-nav{display:flex; align-items:center; justify-content:center; gap:18px; margin:18px 0 0;}
+.team-nav-btn{width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--card); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .2s ease, color .2s ease; flex-shrink:0;}
 .team-nav-btn:hover{border-color:var(--gold); color:var(--gold-light);}
 .team-nav-btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+.team-dots{display:flex; align-items:center; gap:10px;}
+.team-dot{width:9px; height:9px; border-radius:50%; border:none; padding:0; background:var(--border); cursor:pointer; transition:background .25s ease, transform .25s ease;}
+.team-dot:hover{background:var(--gold-light);}
+.team-dot[aria-current="true"]{background:var(--gold); transform:scale(1.4);}
+.team-dot:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
 .lawyer-card{background:var(--card-glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border:1px solid var(--border); padding:clamp(24px,4vw,48px); display:grid; grid-template-columns:220px 1fr; gap:40px;}
-@media (max-width:760px){.lawyer-card{grid-template-columns:1fr; text-align:center;} .team-card{width:min(760px,90%); padding:18px 0;}}
+@media (min-width:761px){.team-card .lawyer-card{grid-template-columns:150px 1fr; gap:24px; padding:clamp(20px,2.6vw,32px);}}
+@media (max-width:760px){.lawyer-card{grid-template-columns:1fr; text-align:center;} .team-card{width:min(760px,86%); padding:18px 0;}}
 .lawyer-photo{width:100%; aspect-ratio:1; overflow:hidden; border:1px solid rgba(198,154,79,.3); margin-bottom:18px;}
 .lawyer-photo img{width:100%; height:100%; object-fit:cover; -webkit-user-drag:none; user-select:none;}
 .team-card img{-webkit-user-drag:none;}
@@ -597,6 +603,11 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
         <button type="button" class="team-nav-btn" id="teamPrev" aria-label="Advogado anterior">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="team-dots" id="teamDots" role="tablist" aria-label="Selecionar advogado">
+          <button type="button" class="team-dot" data-index="0" role="tab" aria-label="Ver perfil de Elton Hess" aria-current="true"></button>
+          <button type="button" class="team-dot" data-index="1" role="tab" aria-label="Ver perfil de Nilton Soares" aria-current="false"></button>
+          <button type="button" class="team-dot" data-index="2" role="tab" aria-label="Ver perfil de Pamela Soares" aria-current="false"></button>
+        </div>
         <button type="button" class="team-nav-btn" id="teamNext" aria-label="Próximo advogado">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -855,11 +866,12 @@ if('IntersectionObserver' in window && !reduceMotion){
   var cards = Array.prototype.slice.call(stage.querySelectorAll('.team-card'));
   var prevBtn = document.getElementById('teamPrev');
   var nextBtn = document.getElementById('teamNext');
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.team-dot'));
   var total = cards.length;
   var activeIndex = 0;
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var SCALE_SIDE = 0.84, OPACITY_SIDE = 0.42;
+  var SCALE_SIDE = 0.8, OPACITY_SIDE = 0.55;
 
   function relPos(index){
     var d = index - activeIndex;
@@ -870,7 +882,7 @@ if('IntersectionObserver' in window && !reduceMotion){
 
   function currentOffset(){
     var w = cards[activeIndex] ? cards[activeIndex].getBoundingClientRect().width : 0;
-    return w * 0.56;
+    return w * 0.58;
   }
 
   function layout(dragPx){
@@ -910,6 +922,9 @@ if('IntersectionObserver' in window && !reduceMotion){
       card.classList.toggle('active', isActive);
       card.setAttribute('aria-current', isActive ? 'true' : 'false');
     });
+    dots.forEach(function(dot, idx){
+      dot.setAttribute('aria-current', idx === activeIndex ? 'true' : 'false');
+    });
     updateInertness();
     layout();
     updateStageHeight();
@@ -917,6 +932,12 @@ if('IntersectionObserver' in window && !reduceMotion){
 
   function next(){ setActiveIndex(activeIndex + 1); }
   function prev(){ setActiveIndex(activeIndex - 1); }
+
+  dots.forEach(function(dot, idx){
+    dot.addEventListener('click', function(){
+      if(idx !== activeIndex){ setActiveIndex(idx); restartAutoplay(); }
+    });
+  });
 
   /* autoplay */
   var autoplayTimer = null;
