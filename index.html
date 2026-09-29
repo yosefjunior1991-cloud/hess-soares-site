@@ -47,10 +47,10 @@
       },
       "sameAs": ["https://share.google/1R9GXpvK7DGMRialf", "https://www.instagram.com/hess_e_soares/"],
       "areaServed": ["Blumenau", "Pomerode", "Timbó", "Indaial", "Gaspar", "Brusque"],
-      "knowsAbout": ["Direito Civil", "Direito Imobiliário", "Direito de Família", "Direito das Sucessões", "Direito Previdenciário", "Direito Penal", "Direito Trabalhista", "Direito Empresarial"],
+      "knowsAbout": ["Direito Civil", "Direito Imobiliário", "Direito de Família", "Direito das Sucessões", "Direito Previdenciário", "Direito Trabalhista", "Assessoria Empresarial"],
       "employee": [
-        { "@type": "Person", "name": "Elton Claus Hess dos Santos", "jobTitle": "Advogado Sócio — Direito Previdenciário, Trabalhista e Penal", "identifier": "OAB/SC 52.635" },
-        { "@type": "Person", "name": "Nilton Djhone Soares", "jobTitle": "Advogado Sócio — Direito Civil, Imobiliário, Empresarial", "identifier": "OAB/SC 54.436" },
+        { "@type": "Person", "name": "Elton Claus Hess dos Santos", "jobTitle": "Advogado Sócio — Direito Previdenciário e Trabalhista", "identifier": "OAB/SC 52.635" },
+        { "@type": "Person", "name": "Nilton Djhone Soares", "jobTitle": "Advogado Sócio — Direito Civil, Imobiliário e Assessoria Empresarial", "identifier": "OAB/SC 54.436" },
         { "@type": "Person", "name": "Pamela M. R. Soares", "jobTitle": "Advogada — Família, Sucessões e Extrajudicial", "identifier": "OAB/SC 63.070" }
       ],
       "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "24" },
@@ -293,7 +293,9 @@ section{padding:96px 0;}
 /* ---------- practice areas ---------- */
 #areas{background:var(--bg-glass); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
 .areas-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+@media (min-width:941px){.areas-grid > .area-card:last-child:nth-child(3n+1){grid-column:2;}}
 @media (max-width:940px){.areas-grid{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:641px) and (max-width:940px){.areas-grid > .area-card:last-child:nth-child(2n+1){grid-column:1 / -1; justify-self:center; width:calc(50% - 12px);}}
 @media (max-width:640px){.areas-grid{grid-template-columns:1fr;}}
 .area-card{position:relative; padding:32px; background:var(--card-glass); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); border:1px solid var(--border); transition:border-color .4s ease; overflow:hidden; cursor:pointer;}
 .area-card:hover{border-color:rgba(198,154,79,.45);}
@@ -545,10 +547,10 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
             </div>
             <div class="lawyer-info">
               <h4><span class="dot"></span>Sobre</h4>
-              <p>Advogado com trajetória consolidada no cenário jurídico, cuja atuação é orientada pela excelência técnica e por uma abordagem estratégica em áreas de alta complexidade, como Direito Penal, Trabalhista e Previdenciário. Detém amplo domínio das rotinas forenses e da prática processual, dedicando-se à construção de soluções jurídicas personalizadas, seguras e eficazes.</p>
+              <p>Advogado com trajetória consolidada no cenário jurídico, cuja atuação é orientada pela excelência técnica e por uma abordagem estratégica em áreas de alta complexidade, como Direito Trabalhista e Previdenciário. Detém amplo domínio das rotinas forenses e da prática processual, dedicando-se à construção de soluções jurídicas personalizadas, seguras e eficazes.</p>
               <h4><span class="dot"></span>Áreas de Atuação</h4>
               <div class="tag-list">
-                <span class="tag">Direito Previdenciário</span><span class="tag">Direito Trabalhista</span><span class="tag">Direito Penal</span>
+                <span class="tag">Direito Previdenciário</span><span class="tag">Direito Trabalhista</span>
               </div>
               <h4><span class="dot"></span>Formação</h4>
               <p>Formado em Direito pela Faculdade Sinergia (conceito 5 no MEC). Pós-Graduações em Direito do Trabalho e Direito Previdenciário. Atualmente cursando especialização em Previdenciário.</p>
@@ -566,10 +568,10 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
             </div>
             <div class="lawyer-info">
               <h4><span class="dot"></span>Sobre</h4>
-              <p>Profissional dedicado, com sólida experiência nas áreas de Direito Civil, Imobiliário e Empresarial. Graduado pela Faculdade Sinergia, instituição avaliada com conceito 5 pelo MEC, possui pós-graduação em Direito Imobiliário e Direito Penal. Atua de forma estratégica e comprometida na busca das melhores soluções jurídicas para seus clientes.</p>
+              <p>Profissional dedicado, com sólida experiência em Direito Civil, Direito Imobiliário e Assessoria Empresarial. Graduado pela Faculdade Sinergia, instituição avaliada com conceito 5 pelo MEC, possui pós-graduação em Direito Imobiliário e Direito Penal. Atua de forma estratégica e comprometida na busca das melhores soluções jurídicas para seus clientes.</p>
               <h4><span class="dot"></span>Áreas de Atuação</h4>
               <div class="tag-list">
-                <span class="tag">Direito Civil</span><span class="tag">Direito Imobiliário</span><span class="tag">Direito Empresarial</span>
+                <span class="tag">Direito Civil</span><span class="tag">Direito Imobiliário</span><span class="tag">Assessoria Empresarial</span>
               </div>
               <h4><span class="dot"></span>Formação</h4>
               <p>Formado pela Faculdade Sinergia (conceito 5 no MEC). Pós-graduado em Direito Imobiliário e Direito Penal. Atualmente cursando especialização em Partilha e Sucessões.</p>
@@ -650,7 +652,7 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
       </div>
       <div class="area-card reveal" data-quiz-open data-area="EMPRESARIAL">
         <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6" stroke="currentColor" stroke-width="1.4"/></svg></div>
-        <h3>Direito Empresarial</h3>
+        <h3>Assessoria Empresarial</h3>
         <p>Constituição de empresas, contratos comerciais, recuperação judicial e falências.</p>
         <button type="button" class="area-more">Saiba mais →</button>
       </div>
@@ -658,12 +660,6 @@ footer h4{font-size:1.05rem; margin-bottom:20px;}
         <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M15 9a2.6 2.6 0 100-5.2M13 21c.3-2.9 2.4-5 5-5.3" stroke="currentColor" stroke-width="1.4"/></svg></div>
         <h3>Direito Previdenciário</h3>
         <p>Aposentadorias, benefícios do INSS, revisões, pensões e planejamento previdenciário.</p>
-        <button type="button" class="area-more">Saiba mais →</button>
-      </div>
-      <div class="area-card reveal" data-quiz-open data-area="PENAL">
-        <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.4"/></svg></div>
-        <h3>Direito Penal</h3>
-        <p>Defesa criminal, recursos, habeas corpus, inquéritos policiais e processos criminais.</p>
         <button type="button" class="area-more">Saiba mais →</button>
       </div>
       <div class="area-card reveal" data-quiz-open data-area="TRABALHISTA">
@@ -1047,7 +1043,7 @@ if('IntersectionObserver' in window && !reduceMotion){
   };
   var ROTEAMENTO = {
     CIVIL:'NILTON', IMOB:'NILTON', EMPRESARIAL:'NILTON', PREV:'ELTON',
-    PENAL:'ELTON', TRABALHISTA:'ELTON', FAM:'PAMELA', SUC:'PAMELA'
+    TRABALHISTA:'ELTON', FAM:'PAMELA', SUC:'PAMELA'
   };
 
   var AREA_OPCOES = [
@@ -1057,13 +1053,12 @@ if('IntersectionObserver' in window && !reduceMotion){
     {key:'PREV',        label:'Benefício do INSS (auxílio, aposentadoria, revisão)'},
     {key:'TRABALHISTA', label:'Questão trabalhista (demissão, direitos, processo)'},
     {key:'CIVIL',       label:'Contrato, cobrança ou indenização'},
-    {key:'PENAL',       label:'Situação criminal ou policial'},
     {key:'EMPRESARIAL', label:'Abrir empresa ou questão empresarial'}
   ];
   var AREA_LABEL_CURTO = {
     IMOB:'Direito Imobiliário', FAM:'Direito de Família', SUC:'Direito das Sucessões',
     PREV:'Direito Previdenciário', TRABALHISTA:'Direito Trabalhista', CIVIL:'Direito Civil',
-    PENAL:'Direito Penal', EMPRESARIAL:'Direito Empresarial'
+    EMPRESARIAL:'Assessoria Empresarial'
   };
   var AREA_INFO = {
     IMOB:{necessario:'Documentos do imóvel e comprovantes de posse ou compra', prazo:'De poucos dias (revisão de contrato) a alguns meses (regularização)'},
@@ -1072,7 +1067,6 @@ if('IntersectionObserver' in window && !reduceMotion){
     PREV:{necessario:'Seu CNIS (extrato do INSS) e documentos médicos, se houver', prazo:'Primeira análise costuma sair em 1 a 2 semanas'},
     CIVIL:{necessario:'Contrato, comprovantes ou provas relacionadas ao caso', prazo:'Primeira análise costuma sair em até 5 dias úteis'},
     TRABALHISTA:{necessario:'Carteira de trabalho e documentos da relação de emprego', prazo:'Primeira análise costuma sair em até 5 dias úteis'},
-    PENAL:{necessario:'Boletim de ocorrência, notificação ou intimação, se houver', prazo:'Atendimento prioritário — quanto antes, melhor'},
     EMPRESARIAL:{necessario:'Contrato social ou dados da empresa e dos sócios', prazo:'Varia conforme a complexidade do caso'},
     OUTRO:{necessario:'Os detalhes que você descreveu', prazo:'Vamos avaliar seu caso e te dar um prazo estimado na conversa'}
   };
