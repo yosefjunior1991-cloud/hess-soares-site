@@ -1,0 +1,14 @@
+{
+  "name": "lyric-video",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Vídeo de letra sincronizada em JavaScript (canvas + DOM) renderizado quadro a quadro com Chromium e ffmpeg.",
+  "scripts": {
+    "dados": "node tools/analisar-audio.cjs \"$MUSICA_DIR\"/musica.m4a data/audio.json && node tools/montar-dados.cjs \"$MUSICA_DIR\"",
+    "still": "node tools/renderizar.cjs --musica \"$MUSICA_DIR\" --still",
+    "video": "node tools/renderizar.cjs --musica \"$MUSICA_DIR\""
+  },
+  "dependencies": {
+    "playwright": "^1.56.1"
+  }
+}
