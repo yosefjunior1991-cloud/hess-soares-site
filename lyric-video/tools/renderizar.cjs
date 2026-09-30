@@ -7,7 +7,7 @@
 //
 // Vídeo:   node tools/renderizar.cjs --musica <pasta>[,<pasta2>...] --saida out/joao.mp4
 //              [--formato 16:9|9:16|1:1] [--de 0] [--ate 90] [--fps 30] [--workers 4] [--crf 18] [--altura 1080]
-//              [--temas pastor,aguas,correntes] [--fundo imagem.jpg] [--tune animation] [--sem-fade-fim]
+//              [--temas pastor,aguas,correntes] [--fundo imagem.jpg] [--tune animation] [--legenda inteira|palavras] [--sem-fade-fim]
 //          --conferencia  etapa 1 da regra do canal: fundo preto, só a legenda (720p, leve)
 //          Com várias pastas, as músicas tocam em sequência (áudio juntado sem pausa) e cada uma tem a sua
 //          abertura e o seu tema de animação (--temas). Temas de lago usam a paleta da imagem (--fundo,
@@ -46,6 +46,7 @@ let ate = Number(arg('ate', 0));
 const nTrab = Math.max(1, Number(arg('workers', Math.min(4, os.cpus().length))));
 const crf = String(arg('crf', conferencia ? 27 : 18));
 const preset = String(arg('preset', conferencia ? 'veryfast' : 'medium'));
+const legendaModo = arg('legenda', '');        // inteira | palavras (padrão: inteira nos temas de lago, palavras no do pastor)
 const semFadeFim = process.argv.includes('--sem-fade-fim');   // trecho que será emendado em outro vídeo: não some no fim do trecho
 const tune = arg('tune', '');                  // ex.: animation (bom para cenas de desenho com áreas lisas)
 const imagem = arg('imagem', 'jpeg');
@@ -132,7 +133,7 @@ async function abrirPagina(porta, fimT) {
   const page = await context.newPage();
   page.on('pageerror', (e) => console.error('[página] erro:', e.message));
   page.on('console', (m) => { if (m.type() === 'error') console.error('[página]', m.text()); });
-  await page.goto(`http://127.0.0.1:${porta}/src/index.html?w=${W}&h=${H}${fimT ? `&fim=${fimT}` : ''}${conferencia ? '&modo=conferencia' : ''}`);
+  await page.goto(`http://127.0.0.1:${porta}/src/index.html?w=${W}&h=${H}${fimT ? `&fim=${fimT}` : ''}${conferencia ? '&modo=conferencia' : ''}${legendaModo ? `&legenda=${legendaModo}` : ''}`);
   await page.waitForFunction('window.__pronto === true || window.__erro', null, { timeout: 120000 });
   const erro = await page.evaluate('window.__erro || null');
   if (erro) { console.error('falha ao iniciar a página:\n' + erro); process.exit(1); }

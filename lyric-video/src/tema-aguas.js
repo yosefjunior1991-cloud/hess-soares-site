@@ -60,7 +60,7 @@
     const tMar = achar(rx('mar_abre'), 0, 141.6);
     const tRecuar = achar(rx('mar_recua'), 0, 180.7);
     const tFecha = dur - 46;                                    // só o vento diminui aqui; o mar fica aberto até o fim
-    const tPovo0 = tMar + 9.5, tPovo1 = tPovo0 + 48;            // o povo começa a atravessar quando a letra diz que agora pode
+    const tPovo0 = tMar + 9.5;                                  // o povo começa a atravessar quando a letra diz que agora pode
     const rxSopro = rx('sopros', 'קדים');                       // "קדים" = vento oriental (Êxodo 14:21)
     const sopros = linhas.filter((l) => rxSopro.test(l.txt));
 
@@ -81,6 +81,7 @@
         peso: 0.30 * (1 - smooth(15, 110, tl)),
         nevoa: 0.92 - 0.50 * smooth(30, 200, tl) + 0.06 * Math.sin(tl * 0.05),
         vento: ventoEm(tl), ventoAmp: ventoBase(tl), ventoVel: 0.3,
+        ventoFita: clamp(0.55 + 0.45 * ventoEm(tl)),                 // as fitas de vento sopram o vídeo inteiro
         solY: lerp(HOR + 44, 0.41 * ALT, ease.inOutSine(smooth(8, 190, tl))) - 0.06 * ALT * smooth(200, dur, tl),
         solForca: 0.45 + 0.55 * smooth(0, 55, tl),
         raios: 0.12 + 0.75 * smooth(130, 235, tl),
@@ -93,11 +94,17 @@
     }
 
     // ---------------------------------------------------------------- mar aberto: caminho seco entre paredes de água
-    const PESSOAS = [
-      { d: -0.46, o: 0.070, cor: P.rosa, c: 0 }, { d: -0.14, o: 0.0, cor: L.ml(P.teal, P.branco, 0.15), c: 1 }, { d: 0.22, o: 0.028, cor: P.nuvP, c: 0 },
-      { d: 0.50, o: 0.058, cor: P.creme, c: 0 }, { d: -0.32, o: 0.092, cor: L.ml(P.teal, P.nuvP, 0.4), c: 0 }, { d: 0.05, o: 0.11, cor: P.rosa, c: 0 },
-      { d: 0.34, o: 0.128, cor: L.ml(P.teal, P.branco, 0.3), c: 0 },
-    ];
+    // o povo atravessa em fluxo contínuo, do momento em que a letra diz que agora pode até o fim: sempre há gente no caminho
+    const CORES_POVO = [P.rosa, L.ml(P.teal, P.branco, 0.15), P.nuvP, P.creme, L.ml(P.teal, P.nuvP, 0.4), L.ml(P.teal, P.branco, 0.3)];
+    const DT_POVO = 3.1;
+    const POVO = Array.from({ length: Math.ceil((dur - tPovo0) / DT_POVO) + 3 }, (_, k) => ({
+      t0: tPovo0 + k * DT_POVO + (hash1(k * 3.7) - 0.5) * 1.2,
+      d: hash1(k * 7.1 + 2) - 0.5,
+      tw: 46 * (0.9 + 0.2 * hash1(k * 5.3)),
+      cor: CORES_POVO[Math.floor(hash1(k * 9.1) * CORES_POVO.length)],
+      cajado: k % 7 === 3,
+      alt: 0.92 + 0.16 * hash1(k * 2.9),
+    }));
     function trincheira(ctx, S) {
       const pr = S.prog;
       if (pr < 0.004) return;
@@ -180,17 +187,20 @@
 
     function povo(ctx, S) {
       const tl = S.tl;
-      const g = clamp((tl - tPovo0) / (tPovo1 - tPovo0));
-      if (g <= 0 || g >= 1 || S.prog < 0.5) return;
-      const sLead = lerp(0.58, 0.065, 1 - Math.pow(1 - g, 1.25));      // já entram andando, sem esperar
+      if (S.prog < 0.5) return;
       const Vx = S.solX, HW = 0.25 * S.W, HT = 400 * smooth(0.02, 0.6, S.prog);
-      const lista = PESSOAS.map((p, i) => ({ p, i, s: sLead + p.o })).sort((a, b) => a.s - b.s);
-      for (const { p, i, s } of lista) {
+      const lista = [];
+      POVO.forEach((w, k) => {
+        const g = (tl - w.t0) / w.tw;
+        if (g <= 0 || g >= 1) return;
+        lista.push({ w, k, s: lerp(0.58, 0.065, 1 - Math.pow(1 - g, 1.25)) });   // já entram andando, sem esperar
+      });
+      lista.sort((a, b) => a.s - b.s);                                          // os mais longe primeiro
+      for (const { w, k, s } of lista) {
         const y = HOR + s * (ALT - HOR) + s * HT;
         if (y > ALT + 120) continue;
-        const x = Vx + p.d * s * HW * 0.9;
-        const alfa = smooth(0.05, 0.13, s);
-        peregrino(ctx, P, x, y, 172 * s, p.cor, tl * 5.2 + i * 1.7, p.c === 1, alfa);
+        const x = Vx + w.d * s * HW * 0.9;
+        peregrino(ctx, P, x, y, 172 * s * w.alt, w.cor, tl * 5.2 + k * 1.7, w.cajado, smooth(0.05, 0.13, s));
       }
     }
 
@@ -223,8 +233,7 @@
       }
     }
     function fitas(ctx, S) {
-      const v = S.vento;
-      if (v < 0.06) return;
+      const v = S.ventoFita;
       const Wd = S.W;
       ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       for (let i = 0; i < 11; i++) {

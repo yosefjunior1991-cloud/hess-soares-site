@@ -90,7 +90,8 @@
 
   // ---------------------------------------------------------------- interface (legenda, abertura, acabamento)
   // a legenda vive no céu: âncora do centro da linha ativa e limites da pilha (frações da altura)
-  const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57, conferencia };
+  const modoLegenda = q.get('legenda') || (lago ? 'inteira' : 'palavras');   // lago: a frase inteira acende de uma vez
+  const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57, conferencia, legendaInteira: modoLegenda === 'inteira' };
   const legenda = Legenda.criar(document.getElementById('legenda'), musica, cfgUI);
   // uma abertura por música (lago) ou a abertura única (tema do pastor)
   let aberturas;
