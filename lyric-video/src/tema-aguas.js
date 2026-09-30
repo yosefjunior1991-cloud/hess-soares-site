@@ -59,21 +59,20 @@
     const tVento = achar(rx('vento'), 0, 131);
     const tMar = achar(rx('mar_abre'), 0, 141.6);
     const tRecuar = achar(rx('mar_recua'), 0, 180.7);
-    const tFecha = dur - 46;
-    const tPovo0 = tRecuar + 6, tPovo1 = tFecha - 2;
+    const tFecha = dur - 46;                                    // só o vento diminui aqui; o mar fica aberto até o fim
+    const tPovo0 = tMar + 9.5, tPovo1 = tPovo0 + 48;            // o povo começa a atravessar quando a letra diz que agora pode
     const rxSopro = rx('sopros', 'קדים');                       // "קדים" = vento oriental (Êxodo 14:21)
     const sopros = linhas.filter((l) => rxSopro.test(l.txt));
 
+    // intensidade do vento: base suave + rajadas nos trechos dos sopros (só a intensidade varia; a velocidade é fixa)
+    const ventoBase = (tl) => (0.10 + 0.36 * smooth(tVento - 4, tVento + 6, tl) + 0.40 * smooth(tRecuar - 2, tRecuar + 12, tl)) * (1 - 0.8 * smooth(tFecha, tFecha + 25, tl));
     const ventoEm = (tl) => {
-      const base = (0.10 + 0.36 * smooth(tVento - 4, tVento + 6, tl) + 0.40 * smooth(tRecuar - 2, tRecuar + 12, tl)) * (1 - 0.8 * smooth(tFecha, tFecha + 25, tl));
       let b = 0;
       for (const l of sopros) b = Math.max(b, 0.45 * smooth(l.a - 0.5, l.a + 0.7, tl) * (1 - smooth(l.b, l.b + 1.6, tl)));
-      return clamp(base + b);
+      return clamp(ventoBase(tl) + b);
     };
-    const progEm = (tl) => {
-      const abre = 0.55 * smooth(tMar - 0.5, tMar + 15, tl) + 0.45 * smooth(tRecuar, tRecuar + 19, tl);
-      return abre * (1 - smooth(tFecha, tFecha + 28, tl));
-    };
+    // o mar se abre de uma vez, no momento em que a letra diz que ele se abriu, e fica aberto
+    const progEm = (tl) => smooth(tMar - 0.2, tMar + 1.3, tl);
 
     function estado(tl) {
       return {
@@ -81,7 +80,7 @@
         calor: 0.04 + 0.80 * smooth(6, 215, tl),
         peso: 0.30 * (1 - smooth(15, 110, tl)),
         nevoa: 0.92 - 0.50 * smooth(30, 200, tl) + 0.06 * Math.sin(tl * 0.05),
-        vento: ventoEm(tl),
+        vento: ventoEm(tl), ventoAmp: ventoBase(tl), ventoVel: 0.3,
         solY: lerp(HOR + 44, 0.41 * ALT, ease.inOutSine(smooth(8, 190, tl))) - 0.06 * ALT * smooth(200, dur, tl),
         solForca: 0.45 + 0.55 * smooth(0, 55, tl),
         raios: 0.12 + 0.75 * smooth(130, 235, tl),
@@ -89,7 +88,7 @@
         prog: progEm(tl),
         pomba: smooth(8, 14, tl) * (1 - smooth(dur - 15, dur - 6, tl)),
         subida: smooth(dur - 18, dur - 4, tl),
-        flash: 0,
+        flash: 0.5 * smooth(tMar - 0.1, tMar + 0.3, tl) * (1 - smooth(tMar + 0.3, tMar + 2.8, tl)),
       };
     }
 
@@ -115,6 +114,7 @@
       const sol = S.solForca;
       ctx.save();
       ctx.globalAlpha = smooth(0.004, 0.10, pr);
+      if (S.flash > 0.01) L.brilhoRadial(ctx, Vx, HOR + 10, 520, P.branco, 0.7 * S.flash);
 
       // leito seco (areia pastel iluminada pelo sol)
       ctx.save();
@@ -182,7 +182,7 @@
       const tl = S.tl;
       const g = clamp((tl - tPovo0) / (tPovo1 - tPovo0));
       if (g <= 0 || g >= 1 || S.prog < 0.5) return;
-      const sLead = lerp(0.72, 0.065, ease.inOutSine(g));
+      const sLead = lerp(0.58, 0.065, 1 - Math.pow(1 - g, 1.25));      // já entram andando, sem esperar
       const Vx = S.solX, HW = 0.25 * S.W, HT = 400 * smooth(0.02, 0.6, S.prog);
       const lista = PESSOAS.map((p, i) => ({ p, i, s: sLead + p.o })).sort((a, b) => a.s - b.s);
       for (const { p, i, s } of lista) {
@@ -228,7 +228,7 @@
       const Wd = S.W;
       ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       for (let i = 0; i < 11; i++) {
-        const per = 3.0 + 3.6 * hash1(i * 4.1) - 1.2 * v;
+        const per = 3.0 + 3.6 * hash1(i * 4.1) - 1.2 * 0.3;     // velocidade fixa: variar `per` no tempo faz a fita voltar
         const u = mod(S.t / per + hash1(i * 9.3), 1);
         const y0 = ALT * (0.20 + 0.68 * hash1(i * 2.7 + 1));
         const amp = 14 + 34 * hash1(i * 5.5);

@@ -171,7 +171,10 @@
 
   // ---------------------------------------------------------------- água
   function agua(ctx, S) {
-    const { W, t, vento } = S;
+    const { W, t } = S;
+    // vA: intensidade (amplitude das ondas); vV: velocidade. A velocidade NÃO pode variar com o tempo dentro de
+    // `t * velocidade` (a fase "pula" e a água parece voltar): os temas podem fixá-la em S.ventoVel.
+    const vA = S.ventoAmp ?? S.vento, vV = S.ventoVel ?? S.vento;
     const N = 20, C = S.calor;
     const longe = ml(ml(P.aguaL, P.teal, (1 - C) * 0.45), P.nevoa, 0.22);
     const perto = ml(P.aguaP, P.teal, (1 - C) * 0.15);
@@ -180,9 +183,9 @@
     for (let r = 0; r < N; r++) {
       const q = r / (N - 1), q1 = (r + 1) / (N - 1);
       const y0 = yAt(q), y1 = yAt(Math.min(1, q1));
-      const amp = (0.5 + 12 * Math.pow(q, 1.5)) * (0.65 + 1.1 * vento);
+      const amp = (0.5 + 12 * Math.pow(q, 1.5)) * (0.65 + 1.1 * vA);
       const lam = 46 + 380 * Math.pow(q, 1.3);
-      const v = (6 + 40 * q) * (1 + 1.8 * vento);
+      const v = (6 + 40 * q) * (1 + 1.8 * vV);
       const fase = r * 1.93;
       const curva = new Path2D();
       for (let x = -24, i = 0; x <= W + 24; x += 8, i++) {
@@ -196,7 +199,7 @@
       const g = ctx.createLinearGradient(0, y0 - amp, 0, y1 + amp + 4);
       g.addColorStop(0, css(c0)); g.addColorStop(1, css(c1));
       ctx.fillStyle = g; ctx.fill(area);
-      ctx.strokeStyle = css(crista, (0.10 + 0.26 * (1 - 0.6 * q)) * (0.6 + 0.6 * vento) * (0.7 + 0.3 * S.solForca));
+      ctx.strokeStyle = css(crista, (0.10 + 0.26 * (1 - 0.6 * q)) * (0.6 + 0.6 * vA) * (0.7 + 0.3 * S.solForca));
       ctx.lineWidth = 1 + 2.2 * q; ctx.stroke(curva);
     }
   }
@@ -236,7 +239,7 @@
       const q = Math.pow(hash1(i * 7.3 + 1), 1.2);
       const y = HOR + (ALT - HOR) * Math.pow(q, 1.75) - 4;
       const w = (380 + 820 * hash1(i * 3.1 + 2)) * (0.55 + 0.7 * q);
-      const x = mod(hash1(i * 9.9) * (W + 1400) + t * (6 + 16 * hash1(i * 1.7)) * (0.5 + 1.5 * S.vento) * (S.espelho ? -1 : 1), W + 1400) - 700;
+      const x = mod(hash1(i * 9.9) * (W + 1400) + t * (6 + 16 * hash1(i * 1.7)) * (0.5 + 1.5 * (S.ventoVel ?? S.vento)) * (S.espelho ? -1 : 1), W + 1400) - 700;
       const a = dens * 0.34 * (1 - 0.45 * q);
       ctx.save();
       ctx.translate(x, y); ctx.scale(1, (18 + 60 * q) / w);
@@ -293,7 +296,7 @@
     for (let i = 0; i < 52; i++) {
       const u = hash1(i * 3.3), v = hash1(i * 7.1 + 5);
       const vel = 10 + 26 * hash1(i * 2.9);
-      const x = mod(u * (S.W + 200) - S.t * vel * (0.4 + 1.4 * S.vento) * (S.espelho ? -1 : 1) + 30 * Math.sin(S.t * 0.4 + i), S.W + 200) - 100;
+      const x = mod(u * (S.W + 200) - S.t * vel * (0.4 + 1.4 * (S.ventoVel ?? S.vento)) * (S.espelho ? -1 : 1) + 30 * Math.sin(S.t * 0.4 + i), S.W + 200) - 100;
       const y = mod(v * ALT * 0.95 - S.t * (6 + 10 * hash1(i * 4.4)), ALT * 0.95) + ALT * 0.04;
       const tw = 0.3 + 0.7 * Math.max(0, Math.sin(S.t * (0.8 + hash1(i) * 2) + i * 2.3));
       brilhoRadial(ctx, x, y, 6 + 10 * hash1(i * 1.9 + 3) + 3 * S.A.pulso, P.ouro, 0.55 * tw * f);
