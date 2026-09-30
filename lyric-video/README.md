@@ -62,7 +62,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/cena.js` | Céu, estrelas, sol e lua (inspirados no seletor dia/noite), nuvens de dois tons, colinas em paralaxe, vilarejo, oliveiras, flores, raios de sol, pombas, corações, vaga-lumes e borboletas. |
 | `src/personagens.js` | Pastor, ovelhas, cordeirinho e pombas. A caminhada é travada ao deslocamento do cenário (os pés não "patinam") e o cordeirinho pula no compasso. |
 | `src/legenda.js` | Legendas dinâmicas (veja abaixo). |
-| `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos) e encerramento com um **cartão holográfico picotado** que flutua (inspirado no ingresso do Uiverse). |
+| `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
@@ -103,4 +103,4 @@ hebraico aparecem sempre com **hebraico + transliteração + tradução em portu
 - [HyperFrames](https://github.com/heygen-com/hyperframes) (HTML/CSS/GSAP → MP4 determinístico): o modelo "Chromium + relógio controlado + ffmpeg".
 - [GSAP skills](https://github.com/greensock/gsap-skills) e a skill `ui-ux-pro-max`: presets de movimento (stagger, molas, "saída mais rápida que a entrada").
 - Letras do Apple Music (linha ativa maior, demais desfocadas) e Liquid Glass (pílula translúcida).
-- Uiverse.io (MIT): inspiração para o seletor sol/lua, o anel de brilho giratório, o holograma e a caminhada por quadros-chave.
+- Uiverse.io (MIT): inspiração para o seletor sol/lua, o anel de brilho giratório e a caminhada por quadros-chave.

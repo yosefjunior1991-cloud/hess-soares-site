@@ -89,7 +89,6 @@
   const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57 };
   const legenda = Legenda.criar(document.getElementById('legenda'), musica, cfgUI);
   const abertura = Abertura.criar(document.getElementById('abertura'), musica, cfgUI);
-  const fim = Abertura.criarTicket(document.getElementById('fim'), musica, cfgUI);
   const veu = document.getElementById('veu');
   const fade = document.getElementById('fade');
   const grao = document.getElementById('grao');
@@ -139,7 +138,6 @@
     aplicarCores(tom);
     const vis = legenda.atualizar(t, A);
     abertura.atualizar(t);
-    fim.atualizar(t, dur);                       // assinatura só nos segundos finais da música (não do trecho)
     const centroVeu = lerp(cfgUI.ancora, retrato ? 0.17 : 0.33, abPeso) * 100;
     veu.style.background = `radial-gradient(ellipse 62% 44% at 50% ${centroVeu.toFixed(1)}%, var(--veu) 0%, rgba(0,0,0,0) 100%)`;
     veu.style.opacity = clamp(Math.max(vis, abPeso)).toFixed(3);

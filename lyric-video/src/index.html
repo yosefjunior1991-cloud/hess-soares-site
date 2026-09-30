@@ -56,26 +56,6 @@ html,body{margin:0;background:#14163e;overflow:hidden}
 .ab-canal{margin-top:calc(var(--u)*20px);font-weight:600;font-size:calc(var(--u)*34px);letter-spacing:.2em;text-shadow:0 2px 26px rgba(30,20,90,.5)}
 .ab-aviso{margin-top:calc(var(--u)*16px);font-weight:400;font-size:calc(var(--u)*20px);line-height:1.55;color:rgba(224,240,255,.92);text-shadow:0 1px 14px rgba(30,20,90,.55)}
 
-/* ---------- encerramento: cartão holográfico picotado ---------- */
-#fim{position:absolute;left:50%;top:37%;opacity:0;pointer-events:none}
-.tk-corpo{position:relative;background:linear-gradient(160deg,#fffdf6,#fff6ec 55%,#f6f0ff);--ang:0deg}
-.tk-holo{position:absolute;inset:0;opacity:.62;mix-blend-mode:multiply;
-  background:linear-gradient(to bottom,rgba(255,248,205,.7),rgba(255,255,255,0) 62%),
-  conic-gradient(from var(--ang) at 62% 48%,#ffc9df,#d3c6ff,#c4e9ff,#c9f7dd,#fff0b8,#ffd3c2,#ffc9df)}
-.tk-brilho{position:absolute;inset:0;mix-blend-mode:soft-light;
-  background:linear-gradient(115deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.95) 50%,rgba(255,255,255,0) 68%);background-size:260% 100%}
-.tk-cont{position:absolute;inset:0;padding:calc(var(--u)*34px) calc(var(--u)*26px) calc(var(--u)*24px);display:flex;flex-direction:column;align-items:center;text-align:center;color:#2a2860}
-.tk-titulo{font-weight:800;font-size:calc(var(--u)*44px);letter-spacing:.1em;line-height:1.1;mix-blend-mode:normal}
-.tk-fio{width:70%;height:2px;margin:calc(var(--u)*16px) 0 calc(var(--u)*6px);background:repeating-linear-gradient(90deg,#2a2860 0 8px,transparent 8px 14px);opacity:.35}
-.tk-he{font-family:'Noto Sans Hebrew','Inter',sans-serif;font-weight:700;font-size:calc(var(--u)*62px);line-height:1.5;margin-top:calc(var(--u)*8px)}
-.tk-he span{background:linear-gradient(100deg,#d2557f,#f08a3c);-webkit-background-clip:text;background-clip:text;color:transparent}
-.tk-tr{font-style:italic;font-weight:500;font-size:calc(var(--u)*25px);color:#4657d6}
-.tk-tx{font-weight:600;font-size:calc(var(--u)*27px);color:#a9660b;margin-top:calc(var(--u)*6px)}
-.tk-rodape{margin-top:auto;width:100%;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*12px)}
-.tk-canal{font-weight:600;font-size:calc(var(--u)*17px);letter-spacing:.12em}
-.tk-barras{display:flex;gap:calc(var(--u)*3px);height:calc(var(--u)*46px);align-items:stretch}
-.tk-barras i{display:block;background:#2a2860;opacity:.82}
-
 /* ---------- acabamento ---------- */
 #grao{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.06;pointer-events:none;background-size:256px 256px}
 #fade{position:absolute;inset:0;background:#14163e;opacity:1;pointer-events:none}
@@ -87,7 +67,6 @@ html,body{margin:0;background:#14163e;overflow:hidden}
   <div id="veu"></div>
   <div id="legenda"></div>
   <div id="abertura"></div>
-  <div id="fim"></div>
   <div id="grao"></div>
   <div id="fade"></div>
 </div>
