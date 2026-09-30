@@ -37,6 +37,20 @@ Opções: `--formato 16:9|9:16|1:1`, `--de/--ate` (segundos), `--fps` (30), `--w
 Velocidade de referência (4 núcleos): ~12 quadros/s em 1080p, ou seja, ~15 min para 5 min de música.
 **Não use `work/` como destino** — ele é apagado a cada execução.
 
+### Cópia leve para compartilhar (limite de ~30 MB)
+
+O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
+com dois passes e taxa-alvo (uns 27 MB para 5min20s):
+
+```bash
+M=out/joao-3-16_16x9_completo.mp4
+ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tune animation \
+  -b:v 610k -maxrate 1100k -bufsize 1800k -pass 1 -passlogfile work/pl -an -f null /dev/null
+ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tune animation \
+  -b:v 610k -maxrate 1100k -bufsize 1800k -pass 2 -passlogfile work/pl \
+  -c:a aac -b:a 96k -movflags +faststart out/joao-3-16_16x9_completo_leve-720p.mp4
+```
+
 ## Como funciona
 
 | Arquivo | O que faz |
