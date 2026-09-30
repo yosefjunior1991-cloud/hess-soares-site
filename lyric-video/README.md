@@ -55,7 +55,7 @@ node tools/renderizar.cjs --musica "$MUSICA_DIR" --formato 9:16 --crf 23 --saida
 
 Opções: `--formato 16:9|9:16|1:1`, `--de/--ate` (segundos), `--fps` (30), `--workers` (4),
 `--crf` (18 = quase sem perdas; 23 = bom e leve), `--preset`, `--tune animation`, `--imagem jpeg|png`,
-`--temas`, `--fundo` (imagem da paleta).
+`--temas`, `--fundo` (imagem da paleta), `--legenda inteira|palavras`.
 Velocidade de referência (4 núcleos): ~12 quadros/s em 1080p, ou seja, ~15 min para 5 min de música.
 **Não use `work/` como destino** — ele é apagado a cada execução.
 
@@ -123,6 +123,11 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 então qualquer trecho pode ser renderizado isoladamente e em paralelo com o mesmo resultado.
 
 ### Legendas dinâmicas
+
+> **Modo da legenda.** Nos temas de lago a frase **inteira acende de uma vez, com a cor final, na sua vez** (`--legenda inteira`, o padrão
+> deles): o `legenda.srt` só tem tempo por frase, então a varredura palavra por palavra descrita abaixo ficava à frente ou atrás
+> do canto. O modo `palavras` (varredura, pulo e brilho por palavra) continua disponível e é o padrão do tema do pastor.
+> Palavras-chave mantêm a cor diferente nos dois modos.
 
 Segue as regras do canal: a **estrofe inteira** fica na tela com a **linha cantada acesa**, e linhas em
 hebraico aparecem sempre com **hebraico + transliteração + tradução em português**.
