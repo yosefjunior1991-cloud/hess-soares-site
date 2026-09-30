@@ -1,17 +1,23 @@
 #!/usr/bin/env node
-// Lê a pasta de uma música no formato do projeto Or Israel (legenda.srt, alinhamento.json,
-// config.json...) e grava data/musica.json: linhas, estrofes, palavras com tempo estimado e
-// os textos da abertura. A música em si NÃO é copiada para dentro deste repositório.
+// Lê a pasta de uma (ou mais) música(s) no formato do projeto Or Israel (legenda.srt,
+// alinhamento.json, config.json...) e grava data/musica.json: partes (uma por música), linhas,
+// estrofes, palavras com tempo estimado e os textos da abertura de cada música. Com várias
+// músicas, os tempos de cada uma são deslocados para a posição dela na sequência (como o
+// legendar.py faz). A música em si NÃO é copiada para dentro deste repositório.
 //
-// Uso: node tools/montar-dados.cjs <pasta-da-musica> [saida=data/musica.json]
+// Uso: node tools/montar-dados.cjs <pasta>[,<pasta2>...] [saida=data/musica.json] [--temas pastor,aguas]
 
 const fs = require('fs');
 const path = require('path');
 
-const pasta = process.argv[2] || process.env.MUSICA_DIR;
-const saida = process.argv[3] || path.join(__dirname, '..', 'data', 'musica.json');
-if (!pasta) {
-  console.error('uso: node tools/montar-dados.cjs <pasta-da-musica> [saida.json]');
+const args = process.argv.slice(2);
+const flag = (nome) => { const i = args.indexOf('--' + nome); return i >= 0 ? args[i + 1] : undefined; };
+const posicionais = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
+const pastas = (posicionais[0] || process.env.MUSICA_DIR || '').split(',').map((p) => p.trim()).filter(Boolean);
+const saida = posicionais[1] || path.join(__dirname, '..', 'data', 'musica.json');
+const temas = (flag('temas') || '').split(',').map((t) => t.trim());
+if (!pastas.length) {
+  console.error('uso: node tools/montar-dados.cjs <pasta>[,<pasta2>...] [saida.json] [--temas pastor,aguas]');
   process.exit(1);
 }
 
@@ -51,8 +57,8 @@ const silabasPt = (p) => (p.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase
 
 // palavras que ganham destaque (cor em degradê e "pulo" ao serem cantadas)
 const semNikud = (s) => s.normalize('NFD').replace(/[֑-ׇ]/g, '').replace(/[̀-ͯ]/g, '').toLowerCase();
-const DESTAQUE_HE = /אהב|עולם|חיי|אלהים/;
-const DESTAQUE_PT = /^(amor|amou|vida|mundo|filho|deus|cre|confia|esperanca|renascer|resgatar|eterna|vivera)/;
+const DESTAQUE_HE = /אהב|עולם|חיי|אלהים|רוח|מים|קדים|שבר|עלו|מוסר/;
+const DESTAQUE_PT = /^(amor|amou|vida|mundo|filho|deus|cre|confia|esperanca|renascer|resgatar|eterna|vivera|espirito|aguas|vento|caminho|sopro|jugo|correntes|livres|quebrado|rei)/;
 const ehDestaque = (palavra) => {
   const s = semNikud(palavra).replace(/[.,;:!?"“”]/g, '');
   return eHebraico(palavra) ? DESTAQUE_HE.test(s) : DESTAQUE_PT.test(s);
@@ -91,31 +97,63 @@ function agruparEstrofes(linhas) {
   });
 }
 
-// ---------------------------------------------------------------- montagem
-const cfgMusica = lerJson(path.join(pasta, 'config.json'));
-const cfgGeral = lerJson(path.join(pasta, '..', 'config.json'));
-const cfg = { ...cfgGeral, ...cfgMusica };
+// ---------------------------------------------------------------- uma música -> uma parte
+const DADOS = path.join(__dirname, '..', 'data');
+function lerParte(pastaP, inicio, indice) {
+  const nome = path.basename(pastaP);
+  const cfg = { ...lerJson(path.join(pastaP, '..', 'config.json')), ...lerJson(path.join(pastaP, 'config.json')) };
+  const cues = lerSrt(path.join(pastaP, 'legenda.srt'));
+  const meta = lerJson(path.join(pastaP, 'alinhamento.json'));
+  // animacao.json (opcional, fica junto da música, nunca neste repositório): trechos da letra que disparam
+  // os momentos da animação de cada tema (ex.: a frase em que uma corrente arrebenta)
+  const anim = lerJson(path.join(pastaP, 'animacao.json'));
+  const analise = lerJson(path.join(DADOS, `audio-${nome}.json`), null) || lerJson(path.join(DADOS, 'audio.json'), { duracao: 0 });
 
-const cues = lerSrt(path.join(pasta, 'legenda.srt'));
-const linhas = cues.map((c, i) => {
-  const texto = c.textos[0];
-  const hebraico = eHebraico(texto);
-  const extras = c.textos.slice(1);
-  const translit = hebraico && extras.length >= 2 ? extras[0] : '';
-  const traducao = extras.length >= 2 ? extras[1] : extras[0] || '';
-  return {
-    i, ini: c.ini, fim: c.fim, texto, hebraico, translit, traducao,
-    palavras: palavrasDaLinha(texto, c.ini, c.fim),
-    bloco: 0,
+  const linhas = cues.map((c, i) => {
+    const texto = c.textos[0];
+    const hebraico = eHebraico(texto);
+    const extras = c.textos.slice(1);
+    const translit = hebraico && extras.length >= 2 ? extras[0] : '';
+    const traducao = extras.length >= 2 ? extras[1] : extras[0] || '';
+    const ini = c.ini + inicio, fim = c.fim + inicio;
+    return { i: 0, ini, fim, texto, hebraico, translit, traducao, palavras: palavrasDaLinha(texto, ini, fim), bloco: 0, parte: indice };
+  });
+  if (Array.isArray(meta.blocos) && meta.blocos.length === linhas.length) {
+    linhas.forEach((l, i) => { l.bloco = meta.blocos[i]; });
+  } else {
+    agruparEstrofes(linhas);
+  }
+  linhas.forEach((l) => { l.bloco += indice * 100000; });
+
+  const duracao = analise.duracao || Math.ceil(cues[cues.length - 1].fim + 8);
+  const parte = {
+    indice, nome, tema: temas[indice] || 'pastor',
+    titulo: cfg.titulo || nome,
+    tituloHebraico: cfg.titulo_hebraico || '',
+    tituloTranslit: cfg.titulo_transliteracao || '',
+    versiculos: cfg.versiculos || '',
+    canal: cfg.canal || '',
+    aviso: (cfg.aviso_direitos || '').split('\n').filter(Boolean),
+    inicio, duracao,
+    primeiraLinha: linhas[0].ini,
+    bpm: analise.bpm || 100,
+    primeiraBatida: analise.primeiraBatida || 0,
+    gatilhos: anim.gatilhos || {},
   };
-});
-
-const meta = lerJson(path.join(pasta, 'alinhamento.json'));
-if (Array.isArray(meta.blocos) && meta.blocos.length === linhas.length) {
-  linhas.forEach((l, i) => { l.bloco = meta.blocos[i]; });
-} else {
-  agruparEstrofes(linhas);
+  return { parte, linhas };
 }
+
+// ---------------------------------------------------------------- montagem
+const partes = [];
+let linhas = [];
+let inicio = 0;
+pastas.forEach((p, idx) => {
+  const r = lerParte(p, inicio, idx);
+  partes.push(r.parte);
+  linhas = linhas.concat(r.linhas);
+  inicio += r.parte.duracao;
+});
+linhas.forEach((l, i) => { l.i = i; });
 
 const estrofes = [];
 for (const l of linhas) {
@@ -124,21 +162,17 @@ for (const l of linhas) {
   else estrofes.push({ bloco: l.bloco, ini: l.ini, fim: l.fim, linhas: [l.i] });
 }
 
-const audio = lerJson(path.join(__dirname, '..', 'data', 'audio.json'), { duracao: 0 });
+const p0 = partes[0];
 const musica = {
-  nome: path.basename(pasta),
-  titulo: cfg.titulo || path.basename(pasta),
-  tituloHebraico: cfg.titulo_hebraico || '',
-  tituloTranslit: cfg.titulo_transliteracao || '',
-  versiculos: cfg.versiculos || '',
-  canal: cfg.canal || '',
-  aviso: (cfg.aviso_direitos || '').split('\n').filter(Boolean),
-  duracao: audio.duracao || Math.ceil(linhas[linhas.length - 1].fim + 8),
+  nome: partes.map((p) => p.nome).join('+'),
+  titulo: p0.titulo, tituloHebraico: p0.tituloHebraico, tituloTranslit: p0.tituloTranslit,
+  versiculos: p0.versiculos, canal: p0.canal, aviso: p0.aviso,
+  duracao: inicio,
   primeiraLinha: linhas[0].ini,
-  linhas,
-  estrofes,
+  partes, linhas, estrofes,
 };
 
 fs.mkdirSync(path.dirname(saida), { recursive: true });
 fs.writeFileSync(saida, JSON.stringify(musica, null, 1));
-console.log(`${linhas.length} linhas em ${estrofes.length} estrofes | 1ª linha em ${musica.primeiraLinha.toFixed(2)} s | duração ${musica.duracao} s -> ${saida}`);
+console.log(`${partes.length} música(s): ${partes.map((p) => `${p.nome} (${p.duracao.toFixed(1)} s, tema ${p.tema})`).join(' + ')}`);
+console.log(`${linhas.length} linhas em ${estrofes.length} estrofes | duração total ${musica.duracao.toFixed(2)} s -> ${saida}`);

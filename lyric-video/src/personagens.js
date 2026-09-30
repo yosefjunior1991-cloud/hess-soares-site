@@ -265,7 +265,7 @@
   }
   function pomba(ctx, S, x, y, s, o) {
     const L = S.L;
-    const bate = Math.sin(o.fase);
+    const bate = o.bate !== undefined ? o.bate : Math.sin(o.fase);   // o.bate (-1..1) permite limitar o curso das asas (pairar)
     ctx.save();
     ctx.translate(x, y + bate * 3);
     ctx.scale(s * (o.dir || 1), s);

@@ -18,6 +18,9 @@
     fetch('../data/audio.json').then((r) => r.json()),
   ]);
   const dur = musica.duracao;
+  const partes = musica.partes || [];
+  const lago = partes.some((p) => p.tema && p.tema !== 'pastor');       // temas de lago: paleta vinda da imagem da música
+  if (lago) Lago.iniciar((await fetch('../data/paleta.json').then((r) => r.json())).pastel);
   const quadro = document.getElementById('quadro');
   quadro.style.width = Wpx + 'px'; quadro.style.height = Hpx + 'px';
   quadro.style.setProperty('--u', u);
@@ -89,7 +92,26 @@
   // a legenda vive no céu: âncora do centro da linha ativa e limites da pilha (frações da altura)
   const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57, conferencia };
   const legenda = Legenda.criar(document.getElementById('legenda'), musica, cfgUI);
-  const abertura = Abertura.criar(document.getElementById('abertura'), musica, cfgUI);
+  // uma abertura por música (lago) ou a abertura única (tema do pastor)
+  let aberturas;
+  if (lago) {
+    document.getElementById('abertura').remove();
+    aberturas = partes.map((p, i) => {
+      const el = document.createElement('div'); el.className = 'abertura';
+      quadro.insertBefore(el, document.getElementById('hud'));
+      const t0 = i ? 0.9 : 0.4;
+      const saida = clamp(p.primeiraLinha - p.inicio - t0 - 1.5, 6, 11.6);
+      return Abertura.criar(el, p, cfgUI, { inicio: p.inicio, t0, saida, dur: t0 + saida + 1.4 });
+    });
+    const ab = { '--ab-cor': '#3b3542', '--ab-sombra': 'rgba(255,248,238,.75)', '--ab-he1': '#b9486c', '--ab-he2': '#cf7b3d', '--ab-he3': '#2f8d86', '--ab-he-sombra': 'rgba(255,250,240,.8)',
+      '--ab-tr': '#2f7f80', '--ab-tr-sombra': 'rgba(255,250,240,.85)', '--ab-tr-sombra2': 'rgba(255,250,240,.6)',
+      '--ab-vers-bg': 'rgba(255,255,255,.46)', '--ab-vers-borda': 'rgba(59,53,66,.22)', '--ab-vers-brilho': 'rgba(255,255,255,.8)', '--ab-vers-sombra': 'rgba(150,100,70,.18)', '--ab-vers': '#8a4b1c',
+      '--ab-fio': 'rgba(59,53,66,.5)', '--ab-canal-sombra': 'rgba(255,250,240,.85)', '--ab-aviso': 'rgba(59,53,66,.88)', '--ab-aviso-sombra': 'rgba(255,250,240,.85)' };
+    if (!conferencia) for (const [k2, v] of Object.entries(ab)) quadro.style.setProperty(k2, v);
+  } else {
+    aberturas = [Abertura.criar(document.getElementById('abertura'), musica, cfgUI)];
+  }
+  const atualizarAberturas = (t) => aberturas.forEach((a) => a.atualizar(t));
   const veu = document.getElementById('veu');
   const fade = document.getElementById('fade');
   const grao = document.getElementById('grao');
@@ -113,12 +135,65 @@
   // texto claro (noite) <-> escuro (dia), decidido pela luminosidade do céu atrás da legenda
   const CLARO = { ink: [255, 255, 255, 1], dim: [255, 255, 255, 0.34], translit: [207, 227, 255, 1], traducao: [255, 231, 163, 1], glow: [255, 214, 240, 0.95], k1: [255, 196, 225, 1], k2: [255, 233, 173, 1], veu: [24, 20, 84, 0.38] };
   const ESCURO = { ink: [37, 35, 91, 1], dim: [37, 35, 91, 0.40], translit: [70, 87, 214, 1], traducao: [169, 102, 11, 1], glow: [255, 255, 255, 0.95], k1: [229, 72, 138, 1], k2: [242, 138, 46, 1], veu: [255, 255, 255, 0.42] };
+  // lago: céu sempre claro e pastel -> texto escuro, quente e suave (tons tirados da paleta da imagem)
+  const ESCURO_LAGO = { ink: [58, 52, 66, 1], dim: [58, 52, 66, 0.36], translit: [38, 112, 114, 1], traducao: [150, 86, 40, 1], glow: [255, 252, 244, 0.95], k1: [222, 92, 122, 1], k2: [236, 140, 52, 1], veu: [255, 250, 242, 0.42] };
   function aplicarCores(tom) {
     for (const nome of Object.keys(CLARO)) {
-      const a = CLARO[nome], b = ESCURO[nome];
+      const a = CLARO[nome], b = lago ? ESCURO_LAGO[nome] : ESCURO[nome];
       const c = a.map((v, i) => lerp(v, b[i], tom));
       quadro.style.setProperty('--' + nome, `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${c[3].toFixed(3)})`);
     }
+  }
+
+
+  // ---------------------------------------------------------------- lago: uma cena por música, com transição suave entre elas
+  const temas = lago ? partes.map((p) => (p.tema === 'correntes' ? TemaCorrentes : TemaAguas).criar(musica, p, Wd)) : [];
+  let fora = null;
+  const pombaL = (hex) => (hex === '#DCD3EE' ? '#F6DCCB' : hex);
+  function cenaLago(c2d, t, i, A) {
+    const p = partes[i], tema = temas[i], tl = t - p.inicio;
+    const E = tema.estado(tl);
+    const bx = (tl - p.primeiraBatida) * p.bpm / 60;
+    const S = {
+      t, tl, W: Wd, retrato, A, parte: p, espelho: tema.espelho, batida: bx - Math.floor(bx), indiceBatida: Math.floor(bx),
+      zoom: 1 + 0.035 * clamp(tl / p.duracao), L: pombaL, ...E,
+    };
+    S.solX = (tema.espelho ? 1 - E.fx : E.fx) * Wd;
+    c2d.setTransform(k, 0, 0, k, 0, 0);
+    Lago.desenhar(c2d, S, tema);
+    return S;
+  }
+  function renderizarLago(t, A) {
+    let i = 0;
+    partes.forEach((p, j) => { if (t >= p.inicio - 1.2) i = j; });
+    const p = partes[i];
+    const a = i ? smooth(p.inicio - 1.2, p.inicio + 0.8, t) : 1;       // transição: a música anterior some, a nova aparece
+    if (a < 1) cenaLago(ctx, t, i - 1, A);
+    if (a <= 0) { /* só a anterior */ } else if (a >= 1) cenaLago(ctx, t, i, A);
+    else {
+      if (!fora) { fora = document.createElement('canvas'); fora.width = Wpx; fora.height = Hpx; }
+      const c2 = fora.getContext('2d');
+      c2.setTransform(1, 0, 0, 1, 0, 0); c2.clearRect(0, 0, Wpx, Hpx);
+      cenaLago(c2, t, i, A);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha = a; ctx.drawImage(fora, 0, 0); ctx.globalAlpha = 1;
+    }
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    // vinheta suave e quente
+    const g = ctx.createRadialGradient(Wd / 2, 540, 420, Wd / 2, 540, Math.max(Wd, 1080) * 0.74);
+    g.addColorStop(0, 'rgba(150,100,80,0)'); g.addColorStop(1, 'rgba(150,100,80,0.14)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, Wd, 1080);
+
+    aplicarCores(1);
+    const vis = legenda.atualizar(t, A);
+    atualizarAberturas(t);
+    const abPeso = Math.max(...aberturas.map((x) => x.peso(t)));
+    const centroVeu = lerp(cfgUI.ancora, retrato ? 0.17 : 0.33, abPeso) * 100;
+    veu.style.background = `radial-gradient(ellipse 62% 44% at 50% ${centroVeu.toFixed(1)}%, var(--veu) 0%, rgba(0,0,0,0) 100%)`;
+    veu.style.opacity = clamp(Math.max(vis, abPeso)).toFixed(3);
+    const fimFade = fimT || dur;
+    fade.style.background = '#fbe6d2';
+    fade.style.opacity = clamp((1 - smooth(0, 1.1, t)) + smooth(fimFade - 1.5, fimFade - 0.05, t)).toFixed(3);
   }
 
   // ---------------------------------------------------------------- o quadro
@@ -131,11 +206,12 @@
       aplicarCores(0);
       quadro.style.setProperty('--k1', 'rgba(255,255,255,1)'); quadro.style.setProperty('--k2', 'rgba(255,255,255,1)');
       legenda.atualizar(t, A);
-      abertura.atualizar(t);
+      atualizarAberturas(t);
       atualizarHud(t);
       fade.style.opacity = '0';
       return;
     }
+    if (lago) { renderizarLago(t, A); return; }
     const hora = Paleta.horaEm(tabHora, t);
     const dia = Paleta.ceu(hora);
     const bx = (t - audio.primeiraBatida) * audio.bpm / 60;
@@ -158,7 +234,7 @@
     const tom = smooth(0.62, 0.70, dia.lumTexto) * (1 - abPeso);
     aplicarCores(tom);
     const vis = legenda.atualizar(t, A);
-    abertura.atualizar(t);
+    atualizarAberturas(t);
     const centroVeu = lerp(cfgUI.ancora, retrato ? 0.17 : 0.33, abPeso) * 100;
     veu.style.background = `radial-gradient(ellipse 62% 44% at 50% ${centroVeu.toFixed(1)}%, var(--veu) 0%, rgba(0,0,0,0) 100%)`;
     veu.style.opacity = clamp(Math.max(vis, abPeso)).toFixed(3);

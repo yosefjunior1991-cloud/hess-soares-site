@@ -26,8 +26,9 @@ Para cada música nova (áudio + legenda + imagem):
 
 2. **Clipe animado** — só depois do OK do autor. É **inspirado na imagem enviada com o áudio**, seguindo a
    paleta de cores dela, mas **sempre em tons mais pastéis** (mais claros e menos saturados). Cenário,
-   personagens e elementos são desenhados para cada música (veja `src/paleta.js`, `src/cena.js` e
-   `src/personagens.js`, que hoje trazem o exemplo do João 3:16).
+   personagens e elementos são desenhados para cada música. Exemplos prontos: o dia inteiro do João 3:16
+   (`src/paleta.js`, `src/cena.js`, `src/personagens.js`) e os dois temas de lago de "Sobre as Águas" e
+   "Correntes Cairão" (`src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js`, veja abaixo).
 
 Correções pedidas na conferência refazem a etapa 1 antes de seguir para a 2.
 
@@ -53,9 +54,40 @@ node tools/renderizar.cjs --musica "$MUSICA_DIR" --formato 9:16 --crf 23 --saida
 ```
 
 Opções: `--formato 16:9|9:16|1:1`, `--de/--ate` (segundos), `--fps` (30), `--workers` (4),
-`--crf` (18 = quase sem perdas; 23 = bom e leve), `--preset`, `--imagem jpeg|png`.
+`--crf` (18 = quase sem perdas; 23 = bom e leve), `--preset`, `--tune animation`, `--imagem jpeg|png`,
+`--temas`, `--fundo` (imagem da paleta).
 Velocidade de referência (4 núcleos): ~12 quadros/s em 1080p, ou seja, ~15 min para 5 min de música.
 **Não use `work/` como destino** — ele é apagado a cada execução.
+
+### Várias músicas em sequência, cada uma com a sua animação (temas de lago)
+
+O canal junta músicas com `juntar_com` no `config.json` (ex.: "Sobre as Águas" + "Correntes Cairão"). Aqui
+isso vira **um vídeo só, com abertura própria e animação própria para cada música**, usando a **mesma imagem**
+(`fundo.jpg`) como referência de cor:
+
+```bash
+MUS=/caminho/para/or-israel/musicas
+node tools/renderizar.cjs --musica $MUS/sobre-as-aguas,$MUS/correntes-cairao --temas aguas,correntes \
+  --crf 27 --tune animation --saida out/sobre-as-aguas_correntes-cairao_16x9.mp4
+```
+
+- As músicas tocam sem pausa (`data/audio-juntado.wav`) e os tempos de cada legenda são deslocados para a
+  posição da música na sequência (`tools/montar-dados.cjs`). Há uma análise de áudio por música e a do áudio juntado.
+- `tools/paleta-da-imagem.cjs` amostra regiões da imagem (céu, nuvens, sol, água, pedras...) e converte cada cor
+  para **pastel** (mais clara e menos saturada, mantendo o matiz). `src/lago.js` desenha o cenário-base com essas cores.
+- **Sobre as Águas** (`src/tema-aguas.js`): a pomba (o Espírito) pairando sobre as águas, o vento oriental em fitas, o mar
+  se abrindo em um caminho seco entre paredes de água, o povo atravessando e o mar se acalmando.
+- **Correntes Cairão** (`src/tema-correntes.js`, composição espelhada): um jugo de madeira preso por correntes; a cada
+  refrão uma corrente arrebenta (respingos, pombas), o jugo se parte em luz, peixes saltam e lírios florescem.
+- Os momentos de cada animação saem do **texto da legenda**, então sobrevivem a ajustes de tempo dela. Os trechos da
+  letra que disparam cada momento ficam num `animacao.json` **na pasta da música** (nunca neste repositório público),
+  no formato `{"gatilhos": {"chave": "trecho|outro trecho"}}` (expressões regulares sem distinção de maiúsculas). Chaves:
+  `vento`, `mar_abre`, `mar_recua`, `sopros` (tema `aguas`) e `primeiro_elo`, `correntes_caem`, `livres` (tema `correntes`).
+  Sem o arquivo, valem tempos padrão.
+- `--temas` aceita `pastor` (o dia do João 3:16), `aguas` e `correntes`; novos temas seguem o mesmo molde
+  (`estado(tl)`, `agua(ctx,S)`, `frente(ctx,S)` em `src/tema-*.js`).
+- Tamanho: 1080p com `--crf 27 --tune animation` rende ~1,5 Mb/s (≈95 MB para 8,5 min). O GitHub não aceita arquivo
+  acima de 100 MB; se passar, suba o `--crf`.
 
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
@@ -75,6 +107,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 
 | Arquivo | O que faz |
 |---|---|
+| `tools/paleta-da-imagem.cjs` | Extrai a paleta da imagem da música e a converte para tons pastéis (`data/paleta.json`). |
 | `tools/analisar-audio.cjs` | Decodifica o áudio e calcula, por quadro, energia total, graves/médios/agudos, pulsos de batida e BPM. As animações "respiram" com esses números. |
 | `tools/montar-dados.cjs` | Lê `legenda.srt` + `alinhamento.json` + `config.json` e gera linhas, estrofes e tempo de cada palavra (estimado por sílabas dentro do tempo da legenda). |
 | `tools/renderizar.cjs` | Servidor local + Chromium (Playwright) + ffmpeg. Vários trabalhadores renderizam trechos em paralelo; depois une tudo e coloca o áudio. |
@@ -82,7 +115,8 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/cena.js` | Céu, estrelas, sol e lua (inspirados no seletor dia/noite), nuvens de dois tons, colinas em paralaxe, vilarejo, oliveiras, flores, raios de sol, pombas, corações, vaga-lumes e borboletas. |
 | `src/personagens.js` | Pastor, ovelhas, cordeirinho e pombas. A caminhada é travada ao deslocamento do cenário (os pés não "patinam") e o cordeirinho pula no compasso. |
 | `src/legenda.js` | Legendas dinâmicas (veja abaixo). |
-| `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos). |
+| `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos); uma por música quando há várias. |
+| `src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js` | Cenário de lago (paleta da imagem) e os dois temas de animação descritos acima. |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),

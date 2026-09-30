@@ -40,21 +40,25 @@ html,body{margin:0;background:#14163e;overflow:hidden}
 .translit{font-style:italic;font-weight:500;font-size:calc(var(--u)*40px);color:var(--translit);margin-top:.22em;letter-spacing:.01em}
 .traducao{font-weight:600;font-size:calc(var(--u)*44px);color:var(--traducao);margin-top:.14em}
 
-/* ---------- abertura ---------- */
-#abertura{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;visibility:hidden;color:#fff;text-align:center;padding-top:calc(var(--u)*72px);box-sizing:border-box}
+/* ---------- abertura (uma por música; as cores mudam por variáveis para fundos claros) ---------- */
+#quadro{--ab-cor:#fff;--ab-sombra:rgba(40,30,110,.55);--ab-he1:#fff2cc;--ab-he2:#ffd6ac;--ab-he3:#ffc4dc;--ab-he-sombra:rgba(70,40,130,.5);
+  --ab-tr:#e4f2ff;--ab-tr-sombra:rgba(40,30,110,.7);--ab-tr-sombra2:rgba(40,30,110,.3);
+  --ab-vers-bg:rgba(52,42,120,.30);--ab-vers-borda:rgba(255,255,255,.38);--ab-vers-brilho:rgba(255,255,255,.45);--ab-vers-sombra:rgba(50,30,120,.25);--ab-vers:#ffe7a3;
+  --ab-fio:rgba(255,255,255,.75);--ab-canal-sombra:rgba(30,20,90,.5);--ab-aviso:rgba(224,240,255,.92);--ab-aviso-sombra:rgba(30,20,90,.55)}
+.abertura{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;visibility:hidden;color:var(--ab-cor);text-align:center;padding-top:calc(var(--u)*72px);box-sizing:border-box}
 .ab-bloco{display:flex;flex-direction:column;align-items:center}
-.ab-titulo{display:flex;font-weight:800;font-size:calc(var(--u)*112px);letter-spacing:.14em;line-height:1.1;text-shadow:0 4px 44px rgba(40,30,110,.55)}
+.ab-titulo{display:flex;font-weight:800;font-size:calc(var(--u)*112px);letter-spacing:.14em;line-height:1.1;text-shadow:0 4px 44px var(--ab-sombra)}
 .ab-l{display:inline-block;will-change:transform}
 .ab-he{font-family:'Noto Sans Hebrew','Inter',sans-serif;font-weight:700;font-size:calc(var(--u)*84px);line-height:1.4;margin-top:.1em}
-.ab-he span{display:inline-block;background:linear-gradient(100deg,#fff2cc,#ffd6ac 60%,#ffc4dc);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 3px 16px rgba(70,40,130,.5))}
-.ab-tr{font-style:italic;font-weight:500;font-size:calc(var(--u)*36px);color:#e4f2ff;margin-top:.1em;letter-spacing:.02em;text-shadow:0 2px 20px rgba(40,30,110,.7),0 0 3px rgba(40,30,110,.3)}
-.ab-vers{margin-top:calc(var(--u)*22px);padding:calc(var(--u)*9px) calc(var(--u)*28px);border-radius:999px;background:rgba(52,42,120,.30);
-  border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),0 10px 40px rgba(50,30,120,.25);
-  font-weight:600;font-size:calc(var(--u)*30px);color:#ffe7a3;letter-spacing:.04em}
-.ab-linha{width:calc(var(--u)*220px);height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);margin-top:calc(var(--u)*42px)}
-.ab-canal{margin-top:calc(var(--u)*20px);font-weight:600;font-size:calc(var(--u)*34px);letter-spacing:.2em;text-shadow:0 2px 26px rgba(30,20,90,.5)}
-.ab-aviso{margin-top:calc(var(--u)*16px);font-weight:400;font-size:calc(var(--u)*20px);line-height:1.55;color:rgba(224,240,255,.92);text-shadow:0 1px 14px rgba(30,20,90,.55)}
+.ab-he span{display:inline-block;background:linear-gradient(100deg,var(--ab-he1),var(--ab-he2) 60%,var(--ab-he3));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 16px var(--ab-he-sombra))}
+.ab-tr{font-style:italic;font-weight:500;font-size:calc(var(--u)*36px);color:var(--ab-tr);margin-top:.1em;letter-spacing:.02em;text-shadow:0 2px 20px var(--ab-tr-sombra),0 0 3px var(--ab-tr-sombra2)}
+.ab-vers{margin-top:calc(var(--u)*22px);padding:calc(var(--u)*9px) calc(var(--u)*28px);border-radius:999px;background:var(--ab-vers-bg);
+  border:1px solid var(--ab-vers-borda);box-shadow:inset 0 1.5px 0 var(--ab-vers-brilho),0 10px 40px var(--ab-vers-sombra);
+  font-weight:600;font-size:calc(var(--u)*30px);color:var(--ab-vers);letter-spacing:.04em}
+.ab-linha{width:calc(var(--u)*220px);height:2px;background:linear-gradient(90deg,transparent,var(--ab-fio),transparent);margin-top:calc(var(--u)*42px)}
+.ab-canal{margin-top:calc(var(--u)*20px);font-weight:600;font-size:calc(var(--u)*34px);letter-spacing:.2em;text-shadow:0 2px 26px var(--ab-canal-sombra)}
+.ab-aviso{margin-top:calc(var(--u)*16px);font-weight:400;font-size:calc(var(--u)*20px);line-height:1.55;color:var(--ab-aviso);text-shadow:0 1px 14px var(--ab-aviso-sombra)}
 
 /* ---------- conferência: hora e número da linha no canto ---------- */
 #hud{display:none;position:absolute;left:calc(var(--u)*28px);bottom:calc(var(--u)*22px);font-weight:500;font-size:calc(var(--u)*22px);letter-spacing:.06em;color:rgba(255,255,255,.5)}
@@ -69,7 +73,7 @@ html,body{margin:0;background:#14163e;overflow:hidden}
   <canvas id="cena"></canvas>
   <div id="veu"></div>
   <div id="legenda"></div>
-  <div id="abertura"></div>
+  <div id="abertura" class="abertura"></div>
   <div id="hud"></div>
   <div id="grao"></div>
   <div id="fade"></div>
@@ -78,6 +82,9 @@ html,body{margin:0;background:#14163e;overflow:hidden}
 <script src="paleta.js"></script>
 <script src="personagens.js"></script>
 <script src="cena.js"></script>
+<script src="lago.js"></script>
+<script src="tema-aguas.js"></script>
+<script src="tema-correntes.js"></script>
 <script src="legenda.js"></script>
 <script src="abertura.js"></script>
 <script src="main.js"></script>

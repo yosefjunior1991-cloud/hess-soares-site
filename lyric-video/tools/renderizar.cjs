@@ -5,9 +5,13 @@
 // o áudio original é acrescentado. Como cada quadro é função pura de t, o resultado é o mesmo
 // de qualquer jeito que se divida o trabalho.
 //
-// Vídeo:   node tools/renderizar.cjs --musica <pasta> --saida out/joao.mp4
+// Vídeo:   node tools/renderizar.cjs --musica <pasta>[,<pasta2>...] --saida out/joao.mp4
 //              [--formato 16:9|9:16|1:1] [--de 0] [--ate 90] [--fps 30] [--workers 4] [--crf 18] [--altura 1080]
+//              [--temas pastor,aguas,correntes] [--fundo imagem.jpg] [--tune animation]
 //          --conferencia  etapa 1 da regra do canal: fundo preto, só a legenda (720p, leve)
+//          Com várias pastas, as músicas tocam em sequência (áudio juntado sem pausa) e cada uma tem a sua
+//          abertura e o seu tema de animação (--temas). Temas de lago usam a paleta da imagem (--fundo,
+//          padrão: fundo.jpg da primeira pasta) sempre em tons pastéis.
 // Imagens: node tools/renderizar.cjs --musica <pasta> --still 12,30,45.5   (grava em work/stills)
 //
 // Requisitos: playwright (NODE_PATH=$(npm root -g) se estiver instalado globalmente) e ffmpeg
@@ -28,7 +32,9 @@ const arg = (nome, padrao) => {
   const i = process.argv.indexOf('--' + nome);
   return i > 0 && i + 1 < process.argv.length ? process.argv[i + 1] : padrao;
 };
-const musicaDir = arg('musica', process.env.MUSICA_DIR);
+const musicaDirs = String(arg('musica', process.env.MUSICA_DIR) || '').split(',').map((p) => p.trim()).filter(Boolean).map((p) => path.resolve(p));
+const temasArg = arg('temas', '');
+const LAGO = temasArg.split(',').some((t) => t && t !== 'pastor');
 const formato = arg('formato', '16:9');
 const conferencia = process.argv.includes('--conferencia');   // etapa 1: fundo preto, só a legenda (720p por padrão)
 const [W0, H0] = { '16:9': [1920, 1080], '9:16': [1080, 1920], '1:1': [1080, 1080] }[formato] || [1920, 1080];
@@ -40,35 +46,63 @@ let ate = Number(arg('ate', 0));
 const nTrab = Math.max(1, Number(arg('workers', Math.min(4, os.cpus().length))));
 const crf = String(arg('crf', conferencia ? 27 : 18));
 const preset = String(arg('preset', conferencia ? 'veryfast' : 'medium'));
+const tune = arg('tune', '');                  // ex.: animation (bom para cenas de desenho com áreas lisas)
 const imagem = arg('imagem', 'jpeg');
 const stills = arg('still', '');
 const saida = path.resolve(arg('saida', path.join(RAIZ, 'out', `${conferencia ? 'conferencia' : 'video'}-${formato.replace(':', 'x')}.mp4`)));
 const WORK = path.join(RAIZ, 'work');
 
-if (!musicaDir) {
+if (!musicaDirs.length) {
   console.error('informe --musica <pasta da música> (ou defina MUSICA_DIR)');
   process.exit(1);
 }
 
 // ---------------------------------------------------------------- preparação dos dados
 const EXT_AUDIO = ['.m4a', '.mp3', '.wav', '.flac', '.ogg', '.aac', '.opus'];
-const audioArq = fs.readdirSync(musicaDir).filter((f) => EXT_AUDIO.includes(path.extname(f).toLowerCase())).sort()
-  .map((f) => path.join(musicaDir, f))[0];
-if (!audioArq) { console.error('nenhum áudio em', musicaDir); process.exit(1); }
+const audioDe = (dir) => {
+  const a = fs.readdirSync(dir).filter((f) => EXT_AUDIO.includes(path.extname(f).toLowerCase())).sort().map((f) => path.join(dir, f))[0];
+  if (!a) { console.error('nenhum áudio em', dir); process.exit(1); }
+  return a;
+};
+const audios = musicaDirs.map(audioDe);
+const DADOS = path.join(RAIZ, 'data');
+const ALVO_JUNTO = path.join(DADOS, 'audio-juntado.wav');
+let audioArq = audios[0];                      // o que vai para o vídeo (com várias músicas: o áudio juntado)
 
+function rodar(script, args) {
+  const r = spawnSync(process.execPath, [path.join(__dirname, script), ...args], { stdio: 'inherit' });
+  if (r.status !== 0) process.exit(1);
+}
 function preparar() {
-  const alvoAudio = path.join(RAIZ, 'data', 'audio.json');
-  const alvoMusica = path.join(RAIZ, 'data', 'musica.json');
-  const antigo = (arq, fontes) => !fs.existsSync(arq) || fontes.some((f) => fs.statSync(f).mtimeMs > fs.statSync(arq).mtimeMs);
-  const srt = path.join(musicaDir, 'legenda.srt');
-  if (antigo(alvoAudio, [audioArq]) || process.argv.includes('--reanalisar')) {
-    const r = spawnSync(process.execPath, [path.join(__dirname, 'analisar-audio.cjs'), audioArq, alvoAudio, String(fps)], { stdio: 'inherit' });
-    if (r.status !== 0) process.exit(1);
+  fs.mkdirSync(DADOS, { recursive: true });
+  const mt = (f) => fs.statSync(f).mtimeMs;
+  const antigo = (arq, fontes) => !fs.existsSync(arq) || fontes.some((f) => mt(f) > mt(arq));
+  const reanalisar = process.argv.includes('--reanalisar');
+  const alvoAudio = path.join(DADOS, 'audio.json');
+  if (audios.length === 1) {
+    if (antigo(alvoAudio, [audios[0]]) || reanalisar) rodar('analisar-audio.cjs', [audios[0], alvoAudio, String(fps)]);
+  } else {
+    // uma análise por música (duração, BPM, primeira batida) + o áudio juntado, sem pausa, e a análise dele
+    audios.forEach((a, i) => {
+      const alvo = path.join(DADOS, `audio-${path.basename(musicaDirs[i])}.json`);
+      if (antigo(alvo, [a]) || reanalisar) rodar('analisar-audio.cjs', [a, alvo, String(fps)]);
+    });
+    if (antigo(ALVO_JUNTO, audios)) {
+      const ent = audios.flatMap((a) => ['-i', a]);
+      const filtro = audios.map((_, i) => `[${i}:a]aresample=48000,aformat=channel_layouts=stereo[a${i}]`).join(';')
+        + `;${audios.map((_, i) => `[a${i}]`).join('')}concat=n=${audios.length}:v=0:a=1[fora]`;
+      const r = spawnSync(FFMPEG, ['-y', '-loglevel', 'error', ...ent, '-filter_complex', filtro, '-map', '[fora]', '-c:a', 'pcm_s16le', ALVO_JUNTO], { stdio: 'inherit' });
+      if (r.status !== 0) { console.error('falha ao juntar os áudios'); process.exit(1); }
+    }
+    if (antigo(alvoAudio, [ALVO_JUNTO]) || reanalisar) rodar('analisar-audio.cjs', [ALVO_JUNTO, alvoAudio, String(fps)]);
+    audioArq = ALVO_JUNTO;
   }
-  if (antigo(alvoMusica, [srt, alvoAudio, path.join(__dirname, 'montar-dados.cjs')])) {
-    const r = spawnSync(process.execPath, [path.join(__dirname, 'montar-dados.cjs'), musicaDir], { stdio: 'inherit' });
-    if (r.status !== 0) process.exit(1);
+  if (LAGO) {
+    const fundo = path.resolve(arg('fundo', path.join(musicaDirs[0], 'fundo.jpg')));
+    if (!fs.existsSync(fundo)) { console.error('imagem não encontrada:', fundo); process.exit(1); }
+    rodar('paleta-da-imagem.cjs', [fundo, path.join(DADOS, 'paleta.json')]);
   }
+  rodar('montar-dados.cjs', [musicaDirs.join(','), path.join(DADOS, 'musica.json'), ...(temasArg ? ['--temas', temasArg] : [])]);
 }
 
 // ---------------------------------------------------------------- servidor estático local
@@ -124,7 +158,7 @@ async function trabalhador(id, porta, f0, f1, fimT, progresso) {
   const { browser, page } = await abrirPagina(porta, fimT);
   const parte = path.join(WORK, `parte-${String(id).padStart(2, '0')}.mp4`);
   const ff = spawn(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', imagem === 'png' ? 'png' : 'mjpeg', '-i', '-',
-    '-c:v', 'libx264', '-preset', preset, '-crf', crf, '-pix_fmt', 'yuv420p', '-profile:v', 'high',
+    '-c:v', 'libx264', '-preset', preset, ...(tune ? ['-tune', tune] : []), '-crf', crf, '-pix_fmt', 'yuv420p', '-profile:v', 'high',
     '-x264-params', 'aq-mode=3:aq-strength=0.9', '-g', String(fps * 2), parte], { stdio: ['pipe', 'ignore', 'inherit'] });
   const fechou = new Promise((res, rej) => { ff.on('close', (c) => (c === 0 ? res() : rej(new Error('ffmpeg saiu com código ' + c)))); });
   ff.stdin.on('error', () => {});
