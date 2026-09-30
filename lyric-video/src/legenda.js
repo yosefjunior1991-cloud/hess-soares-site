@@ -127,22 +127,22 @@
           const rtl = L.l.hebraico;
           L.pals.forEach((W) => {
             const p = W.p;
-            const prog = ease.inOutSine(clamp((t - p.ini) / Math.max(0.05, p.fim - p.ini)));
+            const prog = cfg.conferencia ? (t >= L.l.ini ? 1 : 0) : ease.inOutSine(clamp((t - p.ini) / Math.max(0.05, p.fim - p.ini)));
             const resto = ((1 - prog) * 100).toFixed(2);
             W.luz.style.clipPath = rtl ? `inset(-40% -40% -40% ${resto}%)` : `inset(-40% ${resto}% -40% -40%)`;
             // "pulo" de mola no instante em que a palavra é cantada
             const dt = t - p.ini;
             const pulo = dt >= 0 && dt < 1.2 ? Math.exp(-6 * dt) * Math.cos(15 * dt) : 0;
-            const sc2 = 1 + (p.destaque ? 0.10 : 0.045) * pulo * a;
+            const sc2 = cfg.conferencia ? 1 : 1 + (p.destaque ? 0.10 : 0.045) * pulo * a;
             // entrada das palavras em cascata
             const dEnt = t - (tEnt + W.ordem * 0.05);
             const pe = mola(dEnt, 2.6, 0.72);
-            const ty = (1 - pe) * 26 * cfg.u;
+            const ty = cfg.conferencia ? 0 : (1 - pe) * 26 * cfg.u;
             W.el.style.transform = `translateY(${ty.toFixed(2)}px) scale(${sc2.toFixed(4)})`;
-            W.el.style.opacity = clamp(dEnt / 0.25).toFixed(3);
+            W.el.style.opacity = cfg.conferencia ? '1' : clamp(dEnt / 0.25).toFixed(3);
             // brilho atrás da palavra acesa, mais forte com a música
             const forca = prog * a * (0.20 + 0.55 * A.energia + (p.destaque ? 0.25 : 0) + 0.2 * A.pulso);
-            W.brilho.style.opacity = clamp(forca).toFixed(3);
+            W.brilho.style.opacity = cfg.conferencia ? '0' : clamp(forca).toFixed(3);
           });
         });
       });

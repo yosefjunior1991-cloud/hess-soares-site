@@ -6,7 +6,8 @@
 // de qualquer jeito que se divida o trabalho.
 //
 // Vídeo:   node tools/renderizar.cjs --musica <pasta> --saida out/joao.mp4
-//              [--formato 16:9|9:16|1:1] [--de 0] [--ate 90] [--fps 30] [--workers 4] [--crf 18]
+//              [--formato 16:9|9:16|1:1] [--de 0] [--ate 90] [--fps 30] [--workers 4] [--crf 18] [--altura 1080]
+//          --conferencia  etapa 1 da regra do canal: fundo preto, só a legenda (720p, leve)
 // Imagens: node tools/renderizar.cjs --musica <pasta> --still 12,30,45.5   (grava em work/stills)
 //
 // Requisitos: playwright (NODE_PATH=$(npm root -g) se estiver instalado globalmente) e ffmpeg
@@ -29,16 +30,19 @@ const arg = (nome, padrao) => {
 };
 const musicaDir = arg('musica', process.env.MUSICA_DIR);
 const formato = arg('formato', '16:9');
-const [W, H] = { '16:9': [1920, 1080], '9:16': [1080, 1920], '1:1': [1080, 1080] }[formato] || [1920, 1080];
+const conferencia = process.argv.includes('--conferencia');   // etapa 1: fundo preto, só a legenda (720p por padrão)
+const [W0, H0] = { '16:9': [1920, 1080], '9:16': [1080, 1920], '1:1': [1080, 1080] }[formato] || [1920, 1080];
+const altura = Number(arg('altura', conferencia ? 720 : H0));
+const W = 2 * Math.round((W0 * altura / H0) / 2), H = 2 * Math.round(altura / 2);
 const fps = Number(arg('fps', 30));
 const de = Number(arg('de', 0));
 let ate = Number(arg('ate', 0));
 const nTrab = Math.max(1, Number(arg('workers', Math.min(4, os.cpus().length))));
-const crf = String(arg('crf', 18));
-const preset = String(arg('preset', 'medium'));
+const crf = String(arg('crf', conferencia ? 27 : 18));
+const preset = String(arg('preset', conferencia ? 'veryfast' : 'medium'));
 const imagem = arg('imagem', 'jpeg');
 const stills = arg('still', '');
-const saida = path.resolve(arg('saida', path.join(RAIZ, 'out', `video-${formato.replace(':', 'x')}.mp4`)));
+const saida = path.resolve(arg('saida', path.join(RAIZ, 'out', `${conferencia ? 'conferencia' : 'video'}-${formato.replace(':', 'x')}.mp4`)));
 const WORK = path.join(RAIZ, 'work');
 
 if (!musicaDir) {
@@ -93,7 +97,7 @@ async function abrirPagina(porta, fimT) {
   const page = await context.newPage();
   page.on('pageerror', (e) => console.error('[página] erro:', e.message));
   page.on('console', (m) => { if (m.type() === 'error') console.error('[página]', m.text()); });
-  await page.goto(`http://127.0.0.1:${porta}/src/index.html?w=${W}&h=${H}${fimT ? `&fim=${fimT}` : ''}`);
+  await page.goto(`http://127.0.0.1:${porta}/src/index.html?w=${W}&h=${H}${fimT ? `&fim=${fimT}` : ''}${conferencia ? '&modo=conferencia' : ''}`);
   await page.waitForFunction('window.__pronto === true || window.__erro', null, { timeout: 120000 });
   const erro = await page.evaluate('window.__erro || null');
   if (erro) { console.error('falha ao iniciar a página:\n' + erro); process.exit(1); }

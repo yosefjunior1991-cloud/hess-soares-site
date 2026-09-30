@@ -10,6 +10,7 @@
   const k = Hpx / 1080;                       // espaço de projeto (altura 1080) -> pixels
   const Wd = Wpx / k;
   const u = (Wpx / 1920) * (retrato ? 1.45 : 1);   // escala dos textos
+  const conferencia = q.get('modo') === 'conferencia';   // etapa 1: fundo preto, só a legenda
   const fimT = q.get('fim') ? +q.get('fim') : null;  // fim do trecho renderizado (para o fade final)
 
   const [musica, audio] = await Promise.all([
@@ -86,12 +87,20 @@
 
   // ---------------------------------------------------------------- interface (legenda, abertura, acabamento)
   // a legenda vive no céu: âncora do centro da linha ativa e limites da pilha (frações da altura)
-  const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57 };
+  const cfgUI = { u, altura: Hpx, ancora: retrato ? 0.38 : 0.335, limiteSuperior: 0.06, limiteInferior: 0.57, conferencia };
   const legenda = Legenda.criar(document.getElementById('legenda'), musica, cfgUI);
   const abertura = Abertura.criar(document.getElementById('abertura'), musica, cfgUI);
   const veu = document.getElementById('veu');
   const fade = document.getElementById('fade');
   const grao = document.getElementById('grao');
+  const hud = document.getElementById('hud');
+  if (conferencia) { grao.style.display = 'none'; hud.style.display = 'block'; }
+  const fmtTempo = (s) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`;
+  function atualizarHud(t) {
+    const i = musica.linhas.findIndex((l) => t >= l.ini && t < l.fim);
+    const onde = i >= 0 ? `linha ${i + 1}/${musica.linhas.length}` : (t < musica.primeiraLinha ? 'introdução' : 'pausa');
+    hud.textContent = `CONFERÊNCIA · ${fmtTempo(t)} · ${onde}`;
+  }
   {
     // ruído fino e determinístico contra "faixas" (banding) nos degradês do céu
     const c = document.createElement('canvas'); c.width = c.height = 256;
@@ -115,6 +124,18 @@
   // ---------------------------------------------------------------- o quadro
   function renderizar(t) {
     const A = A_em(t);
+    if (conferencia) {
+      // etapa 1: fundo preto, texto claro liso (sem degradês, sem efeitos), mesma legenda do vídeo final
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, Wpx, Hpx);
+      aplicarCores(0);
+      quadro.style.setProperty('--k1', 'rgba(255,255,255,1)'); quadro.style.setProperty('--k2', 'rgba(255,255,255,1)');
+      legenda.atualizar(t, A);
+      abertura.atualizar(t);
+      atualizarHud(t);
+      fade.style.opacity = '0';
+      return;
+    }
     const hora = Paleta.horaEm(tabHora, t);
     const dia = Paleta.ceu(hora);
     const bx = (t - audio.primeiraBatida) * audio.bpm / 60;

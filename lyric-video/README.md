@@ -11,6 +11,26 @@ headless; o ffmpeg junta os quadros e o áudio original. Nenhuma imagem ou víde
 > autorais reservados). O projeto lê a pasta da música de fora, por `--musica <pasta>` ou `MUSICA_DIR`.
 > `data/`, `out/` e `work/` estão no `.gitignore`.
 
+## Fluxo em duas etapas (regra do canal Or Israel)
+
+Para cada música nova (áudio + legenda + imagem):
+
+1. **Conferência da legenda** — vídeo de **fundo preto**, só com a legenda sincronizada ao áudio, com o
+   mesmo layout, cores e abertura do vídeo final e, no canto, o tempo e o número da linha
+   (ex.: `CONFERÊNCIA · 0:20.0 · linha 3/71`). A linha acende de uma vez, sem efeitos, para conferir
+   texto e tempos. É leve (720p, ~12 MB para 5 min) e rápida de gerar (~2,5 min):
+
+   ```bash
+   node tools/renderizar.cjs --musica "$MUSICA_DIR" --conferencia --saida out/conferencia.mp4
+   ```
+
+2. **Clipe animado** — só depois do OK do autor. É **inspirado na imagem enviada com o áudio**, seguindo a
+   paleta de cores dela, mas **sempre em tons mais pastéis** (mais claros e menos saturados). Cenário,
+   personagens e elementos são desenhados para cada música (veja `src/paleta.js`, `src/cena.js` e
+   `src/personagens.js`, que hoje trazem o exemplo do João 3:16).
+
+Correções pedidas na conferência refazem a etapa 1 antes de seguir para a 2.
+
 ## Como usar
 
 Requisitos: Node 20+, [Playwright](https://playwright.dev) com Chromium e ffmpeg (com libx264 e AAC).

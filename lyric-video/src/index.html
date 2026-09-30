@@ -56,6 +56,9 @@ html,body{margin:0;background:#14163e;overflow:hidden}
 .ab-canal{margin-top:calc(var(--u)*20px);font-weight:600;font-size:calc(var(--u)*34px);letter-spacing:.2em;text-shadow:0 2px 26px rgba(30,20,90,.5)}
 .ab-aviso{margin-top:calc(var(--u)*16px);font-weight:400;font-size:calc(var(--u)*20px);line-height:1.55;color:rgba(224,240,255,.92);text-shadow:0 1px 14px rgba(30,20,90,.55)}
 
+/* ---------- conferência: hora e número da linha no canto ---------- */
+#hud{display:none;position:absolute;left:calc(var(--u)*28px);bottom:calc(var(--u)*22px);font-weight:500;font-size:calc(var(--u)*22px);letter-spacing:.06em;color:rgba(255,255,255,.5)}
+
 /* ---------- acabamento ---------- */
 #grao{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.06;pointer-events:none;background-size:256px 256px}
 #fade{position:absolute;inset:0;background:#14163e;opacity:1;pointer-events:none}
@@ -67,6 +70,7 @@ html,body{margin:0;background:#14163e;overflow:hidden}
   <div id="veu"></div>
   <div id="legenda"></div>
   <div id="abertura"></div>
+  <div id="hud"></div>
   <div id="grao"></div>
   <div id="fade"></div>
 </div>
