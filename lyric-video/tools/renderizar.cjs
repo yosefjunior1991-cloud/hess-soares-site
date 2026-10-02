@@ -34,7 +34,7 @@ const arg = (nome, padrao) => {
 };
 const musicaDirs = String(arg('musica', process.env.MUSICA_DIR) || '').split(',').map((p) => p.trim()).filter(Boolean).map((p) => path.resolve(p));
 const temasArg = arg('temas', '');
-const LAGO = temasArg.split(',').some((t) => t && t !== 'pastor');
+const LAGO = temasArg.split(',').some((t) => t === 'aguas' || t === 'correntes');   // só estes usam a paleta tirada da imagem
 const formato = arg('formato', '16:9');
 const conferencia = process.argv.includes('--conferencia');   // etapa 1: fundo preto, só a legenda (720p por padrão)
 const [W0, H0] = { '16:9': [1920, 1080], '9:16': [1080, 1920], '1:1': [1080, 1080] }[formato] || [1920, 1080];

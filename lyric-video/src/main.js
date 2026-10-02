@@ -19,8 +19,8 @@
   ]);
   const dur = musica.duracao;
   const partes = musica.partes || [];
-  const lago = partes.some((p) => p.tema && p.tema !== 'pastor');       // temas de lago: paleta vinda da imagem da música
-  if (lago) Lago.iniciar((await fetch('../data/paleta.json').then((r) => r.json())).pastel);
+  const lago = partes.some((p) => p.tema && p.tema !== 'pastor');       // temas "novos" (um cenário por música); o pastor é o tema original
+  if (partes.some((p) => p.tema === 'aguas' || p.tema === 'correntes')) Lago.iniciar((await fetch('../data/paleta.json').then((r) => r.json())).pastel);   // paleta vinda da imagem
   const quadro = document.getElementById('quadro');
   quadro.style.width = Wpx + 'px'; quadro.style.height = Hpx + 'px';
   quadro.style.setProperty('--u', u);
@@ -148,7 +148,8 @@
 
 
   // ---------------------------------------------------------------- lago: uma cena por música, com transição suave entre elas
-  const temas = lago ? partes.map((p) => (p.tema === 'correntes' ? TemaCorrentes : TemaAguas).criar(musica, p, Wd)) : [];
+  const FABRICAS = { aguas: window.TemaAguas, correntes: window.TemaCorrentes, salmo91: window.TemaSalmo91 };
+  const temas = lago ? partes.map((p) => FABRICAS[p.tema].criar(musica, p, Wd)) : [];
   let fora = null;
   const pombaL = (hex) => (hex === '#DCD3EE' ? '#F6DCCB' : hex);
   function cenaLago(c2d, t, i, A) {
@@ -161,7 +162,7 @@
     };
     S.solX = (tema.espelho ? 1 - E.fx : E.fx) * Wd;
     c2d.setTransform(k, 0, 0, k, 0, 0);
-    Lago.desenhar(c2d, S, tema);
+    if (tema.desenhar) tema.desenhar(c2d, S); else Lago.desenhar(c2d, S, tema);   // tema com cenário próprio ou o lago
     return S;
   }
   function renderizarLago(t, A) {

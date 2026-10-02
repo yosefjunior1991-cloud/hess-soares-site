@@ -89,6 +89,27 @@ node tools/renderizar.cjs --musica $MUS/sobre-as-aguas,$MUS/correntes-cairao --t
 - Tamanho: 1080p com `--crf 27 --tune animation` rende ~1,5 Mb/s (≈95 MB para 8,5 min). O GitHub não aceita arquivo
   acima de 100 MB; se passar, suba o `--crf`.
 
+### Tema criado do zero a partir da letra: Salmo 91 (`--temas salmo91`)
+
+Para o Salmo 91 a imagem de fundo da música é **ignorada**: o cenário é desenhado do zero (`src/salmo91.js` e `src/salmo91-seres.js`),
+guiado pela letra inteira. Um peregrino descansa no esconderijo do Altíssimo (uma fenda na rocha, com a sua tenda) sob as grandes
+asas luminosas, e o dia corre conforme os versos:
+
+- o laço do caçador cai e se desfaz; a peste (névoa lilás) não passa do escudo; as asas se abrem e o escudo e a muralha aparecem;
+- terror da noite (noite estrelada e morcegos), flecha de dia, peste nas trevas e destruição ao meio-dia (um ciclo rápido de céu);
+- mil e dez mil flechas caindo dos lados do escudo; o peregrino vê a recompensa dos ímpios;
+- anjos o guardam, o levam nas mãos e a pedra não o faz tropeçar; ele pisa o leão, a serpente e o dragão;
+- o alto refúgio (a subida entre nuvens), o clamor respondido, a angústia que passa, a coroa de luz;
+- longos dias (o sol corre) e a salvação (amanhecer, arco-íris, pombas), e o refrão final de volta ao abrigo.
+
+Os instantes saem do **texto da legenda**; os trechos que os disparam ficam em `animacao.json` na pasta da música (chaves como `laco`, `asas`,
+`noite`, `dia`, `trevas`, `meiodia`, `mil`, `dezmil`, `anjos_he`, `anjos_pt`, `maos`, `pedra`, `leao`, `pisaras`, `apegou`, `livrarei`, `alto`,
+`invocara`, `angustia`, `libertarei`, `honrarei`, `dias`, `salvacao`...). Sem o arquivo valem os tempos padrão de `PADRAO` em `salmo91.js`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/salmo-91 --temas salmo91 --crf 25 --tune animation --saida out/salmo-91_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -117,6 +138,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/legenda.js` | Legendas dinâmicas (veja abaixo). |
 | `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos); uma por música quando há várias. |
 | `src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js` | Cenário de lago (paleta da imagem) e os dois temas de animação descritos acima. |
+| `src/salmo91.js`, `src/salmo91-seres.js` | Tema do Salmo 91, desenhado do zero a partir da letra (cenário, ciclo dia/noite, asas, escudo, peregrino, anjos, leão, serpente, dragão...). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),

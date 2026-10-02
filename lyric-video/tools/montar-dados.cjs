@@ -57,8 +57,8 @@ const silabasPt = (p) => (p.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase
 
 // palavras que ganham destaque (cor em degradê e "pulo" ao serem cantadas)
 const semNikud = (s) => s.normalize('NFD').replace(/[֑-ׇ]/g, '').replace(/[̀-ͯ]/g, '').toLowerCase();
-const DESTAQUE_HE = /אהב|עולם|חיי|אלהים|רוח|מים|קדים|שבר|עלו|מוסר/;
-const DESTAQUE_PT = /^(amor|amou|vida|mundo|filho|deus|cre|confia|esperanca|renascer|resgatar|eterna|vivera|espirito|aguas|vento|caminho|sopro|jugo|correntes|livres|quebrado|rei)/;
+const DESTAQUE_HE = /אהב|עולם|חיי|אלהים|רוח|מים|קדים|שבר|עלו|מוסר|מחס|מצוד|אבטח|כנפ|אברת|מלאכ|ישוע|עליון|שדי|אדני/;
+const DESTAQUE_PT = /^(amor|amou|vida|mundo|filho|deus|cre|confia|esperanca|renascer|resgatar|eterna|vivera|espirito|aguas|vento|caminho|sopro|jugo|correntes|livres|quebrado|rei|refugio|fortaleza|asas|anjos|abrigo|confi|livrar|salva|esconderijo|altissimo|todo-poder|escudo|muralha|adonai)/;
 const ehDestaque = (palavra) => {
   const s = semNikud(palavra).replace(/[.,;:!?"“”]/g, '');
   return eHebraico(palavra) ? DESTAQUE_HE.test(s) : DESTAQUE_PT.test(s);
