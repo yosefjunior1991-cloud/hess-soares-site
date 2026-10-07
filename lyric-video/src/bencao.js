@@ -495,22 +495,32 @@
       if (p < 0.02) return;
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       const x1 = S.gx + 40, x0 = x1 + 250;
-      const ang = Math.atan2(x1 - x0, SOLO - 200 + 40), L = Math.hypot(x1 - x0, SOLO - 160);
+      const ang = Math.atan2(x1 - x0, SOLO - 200 + 40), L = Math.hypot(x1 - x0, SOLO - 160) * 1.14;
       ctx.translate(x0, -40); ctx.rotate(-ang);
+      // o facho é cortado em fatias que se apagam aos poucos ao longo do comprimento (sem borda dura na ponta)
+      const N = 40;
       for (const [k, al] of [[1, 0.13], [0.5, 0.2]]) {
-        const w0 = 90 * k, w1 = 230 * k, g = ctx.createLinearGradient(-w1, 0, w1, 0);
-        g.addColorStop(0, css(K.luzOuro, 0)); g.addColorStop(0.5, css(K.luz, al * p)); g.addColorStop(1, css(K.luzOuro, 0));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-w0, 0); ctx.lineTo(w0, 0); ctx.lineTo(w1, L); ctx.lineTo(-w1, L); ctx.closePath(); ctx.fill();
+        const w0 = 90 * k, w1 = 230 * k;
+        for (let i = 0; i < N; i++) {
+          const u0 = i / N, u1 = (i + 1) / N, um = (u0 + u1) / 2, f = 1 - smooth(0.42, 1.0, um);
+          if (f < 0.004) continue;
+          const a0 = w0 + (w1 - w0) * u0, a1 = w0 + (w1 - w0) * u1, g = ctx.createLinearGradient(-a1, 0, a1, 0);
+          g.addColorStop(0, css(K.luzOuro, 0)); g.addColorStop(0.5, css(K.luz, al * p * f)); g.addColorStop(1, css(K.luzOuro, 0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-a0, L * u0); ctx.lineTo(a0, L * u0); ctx.lineTo(a1, L * u1); ctx.lineTo(-a1, L * u1); ctx.closePath(); ctx.fill();
+        }
       }
       ctx.restore();
       ctx.save();                                                                          // o caminho adiante, aceso
       const yc = (x) => SOLO + 8 + Math.sin((x + S.rol) * 0.005) * 6, xa = S.gx + 150;
-      const g2 = ctx.createLinearGradient(xa, 0, S.W + 40, 0);
-      g2.addColorStop(0, css(K.ouro, 0.7 * p)); g2.addColorStop(1, css(K.ouro, 0));
-      ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(xa, yc(xa) - 22);
-      for (let x = xa; x <= S.W + 40; x += 10) ctx.lineTo(x, yc(x) - 22 + Math.sin((x + S.rol) * 0.013) * 3);
-      for (let x = S.W + 40; x >= xa; x -= 10) ctx.lineTo(x, yc(x) + 32 + Math.sin((x + S.rol) * 0.011) * 3);
-      ctx.closePath(); ctx.fill();
+      // faixas empilhadas, da mais larga e fraca à mais estreita e forte: bordas suaves, sem retângulo
+      for (const [fw, fa] of [[1.2, 0.1], [0.88, 0.17], [0.56, 0.2], [0.26, 0.23]]) {
+        const g2 = ctx.createLinearGradient(xa - 40, 0, S.W + 40, 0);
+        g2.addColorStop(0, css(K.ouro, 0)); g2.addColorStop(0.14, css(K.ouro, fa * p)); g2.addColorStop(1, css(K.ouro, 0));
+        ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(xa - 40, yc(xa) + 5 - 27 * fw);
+        for (let x = xa - 40; x <= S.W + 40; x += 10) ctx.lineTo(x, yc(x) + 5 - 27 * fw + Math.sin((x + S.rol) * 0.013) * 3);
+        for (let x = S.W + 40; x >= xa - 40; x -= 10) ctx.lineTo(x, yc(x) + 5 + 27 * fw + Math.sin((x + S.rol) * 0.011) * 3);
+        ctx.closePath(); ctx.fill();
+      }
       ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = css(K.luz, 0.9 * p);
       for (let i = 0; i < 16; i++) { const x = xa + mod(hash1(i * 4.1) * (S.W - xa) - S.t * 20, S.W - xa), tw = Math.max(0, Math.sin(S.t * (1.5 + hash1(i) * 2) + i * 2)); brilho4(ctx, x, yc(x) + (hash1(i * 2.3) - 0.3) * 30, 2 + 4 * tw); }
       ctx.restore();
@@ -628,7 +638,7 @@
       // a mão do sinal sacerdotal brilha no céu ("Que Sua mão esteja sobre você")
       B.maosCeu(ctx, S.gx + 20, 540, 1.5, win(tMao - 0.3, tMao + 1.4, tMao + 4.6, tMao + 6.4, tl), S.t);
       // e o nome ("Seu nome permaneça sobre nós"), com a letra shin
-      B.shin(ctx, S.gx + 30, 500, 0.62, win(tNome - 0.4, tNome + 1.8, tNome + 5.0, tNome + 7.0, tl), S.t);
+      B.shin(ctx, S.gx + 30, 650, 0.62, win(tNome - 0.4, tNome + 1.8, tNome + 5.0, tNome + 7.0, tl), S.t);
       B.shin(ctx, X_PLAT_B - S.rol, 330, 0.62, 0.9 * win(tShalom[2] - 0.5, tShalom[2] + 2.5, dur - 3, dur, tl), S.t);
       // fundo com paralaxe
       serra(ctx, S, MONT.longe); serra(ctx, S, MONT.meio); serra(ctx, S, MONT.colinas);

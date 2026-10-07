@@ -28,10 +28,18 @@
     const dedo = (x0, topo) => { ctx.beginPath(); ctx.roundRect(x0, topo, 6.2, -6 - topo + 8, 3.1); ctx.fill(); };
     ctx.fillStyle = css(cor);
     ctx.beginPath(); ctx.roundRect(-16.5, -6, 33, 29, 9); ctx.fill();                    // palma
-    dedo(-16.5, -33); dedo(-9.6, -40); dedo(3.4, -40); dedo(10.3, -33);                  // dois dedos de cada lado, com o vão no meio
-    ctx.save(); ctx.translate(pg * 19.5, 7); ctx.rotate(pg * 0.75); ctx.beginPath(); ctx.ellipse(0, 0, 5.4, 12.5, 0, 0, TAU); ctx.fill(); ctx.restore();   // polegar
+    // dois dedos de cada lado, colados dois a dois, e o vão em V entre os pares: estreito na palma, aberto nas pontas
+    const ABRE = 0.27;
     ctx.strokeStyle = css(som, 0.75); ctx.lineWidth = 1.2; ctx.lineCap = 'round';
-    for (const xx of [-9.9, -3.4, 3.4, 9.9]) { ctx.beginPath(); ctx.moveTo(xx, -26); ctx.lineTo(xx, -3); ctx.stroke(); }
+    for (const lado of [-1, 1]) {
+      ctx.save(); ctx.translate(lado * 1.6, -3); ctx.rotate(lado * ABRE); ctx.translate(-lado * 1.6, 3);
+      if (lado < 0) { dedo(-14.4, -33); dedo(-7.5, -40); } else { dedo(1.3, -40); dedo(8.2, -33); }
+      const cx = lado < 0 ? [-11.3, -4.4] : [4.4, 11.3];
+      for (const xx of cx) { ctx.beginPath(); ctx.moveTo(xx, -26); ctx.lineTo(xx, -3); ctx.stroke(); }
+      ctx.strokeStyle = css(som, 0.5); ctx.beginPath(); ctx.moveTo(lado * 7.85, -30); ctx.lineTo(lado * 7.85, -8); ctx.stroke(); ctx.strokeStyle = css(som, 0.75);   // a linha entre os dois dedos do par
+      ctx.restore();
+    }
+    ctx.save(); ctx.translate(pg * 19.5, 7); ctx.rotate(pg * 0.75); ctx.beginPath(); ctx.ellipse(0, 0, 5.4, 12.5, 0, 0, TAU); ctx.fill(); ctx.restore();   // polegar
     ctx.beginPath(); ctx.moveTo(-8, 8); ctx.quadraticCurveTo(0, 13, 8, 8); ctx.stroke();
     ctx.restore();
   }
@@ -225,12 +233,12 @@
       ctx.strokeStyle = g; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(an) * L, Math.sin(an) * L); ctx.stroke();
     }
     ctx.globalCompositeOperation = 'source-over';
-    ctx.strokeStyle = css(K.ouroForte); ctx.lineWidth = 17; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(-50, -64); ctx.lineTo(-44, 24); ctx.quadraticCurveTo(-42, 52, -12, 52); ctx.lineTo(18, 52); ctx.quadraticCurveTo(48, 52, 50, 24); ctx.lineTo(54, -64); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(2, -64); ctx.lineTo(4, 50); ctx.stroke();
-    ctx.strokeStyle = css(K.luz, 0.85); ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(-50, -64); ctx.lineTo(-44, 24); ctx.quadraticCurveTo(-42, 52, -12, 52); ctx.lineTo(18, 52); ctx.quadraticCurveTo(48, 52, 50, 24); ctx.lineTo(54, -64); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(2, -64); ctx.lineTo(4, 50); ctx.stroke();
+    // a letra de verdade (ש), em fonte hebraica, com contorno dourado e miolo de luz
+    ctx.font = '500 250px "Noto Sans Hebrew", "Arial Hebrew", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round';
+    const m = ctx.measureText('\u05E9'), dy = (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2 - 8, h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+    const gr = ctx.createLinearGradient(0, dy - h * 0.55, 0, dy + h * 0.1); gr.addColorStop(0, css(ml(K.luzOuro, K.luz, 0.3))); gr.addColorStop(1, css(ml(K.luzOuro, K.ouro, 0.8)));
+    ctx.strokeStyle = css(K.ouroForte, 0.95); ctx.lineWidth = 5; ctx.strokeText('\u05E9', 0, dy);
+    ctx.fillStyle = gr; ctx.fillText('\u05E9', 0, dy);
     ctx.restore();
   }
 
