@@ -148,7 +148,7 @@
 
 
   // ---------------------------------------------------------------- lago: uma cena por música, com transição suave entre elas
-  const FABRICAS = { aguas: window.TemaAguas, correntes: window.TemaCorrentes, salmo91: window.TemaSalmo91 };
+  const FABRICAS = { aguas: window.TemaAguas, correntes: window.TemaCorrentes, salmo91: window.TemaSalmo91, salmo23: window.TemaSalmo23 };
   const temas = lago ? partes.map((p) => FABRICAS[p.tema].criar(musica, p, Wd)) : [];
   let fora = null;
   const pombaL = (hex) => (hex === '#DCD3EE' ? '#F6DCCB' : hex);
@@ -170,13 +170,14 @@
     partes.forEach((p, j) => { if (t >= p.inicio - 1.2) i = j; });
     const p = partes[i];
     const a = i ? smooth(p.inicio - 1.2, p.inicio + 0.8, t) : 1;       // transição: a música anterior some, a nova aparece
-    if (a < 1) cenaLago(ctx, t, i - 1, A);
-    if (a <= 0) { /* só a anterior */ } else if (a >= 1) cenaLago(ctx, t, i, A);
+    let Sv = null;                                                       // estado da cena visível (o tema pode pedir texto claro)
+    if (a < 1) Sv = cenaLago(ctx, t, i - 1, A);
+    if (a <= 0) { /* só a anterior */ } else if (a >= 1) Sv = cenaLago(ctx, t, i, A);
     else {
       if (!fora) { fora = document.createElement('canvas'); fora.width = Wpx; fora.height = Hpx; }
       const c2 = fora.getContext('2d');
       c2.setTransform(1, 0, 0, 1, 0, 0); c2.clearRect(0, 0, Wpx, Hpx);
-      cenaLago(c2, t, i, A);
+      Sv = cenaLago(c2, t, i, A);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.globalAlpha = a; ctx.drawImage(fora, 0, 0); ctx.globalAlpha = 1;
     }
@@ -186,7 +187,7 @@
     g.addColorStop(0, 'rgba(150,100,80,0)'); g.addColorStop(1, 'rgba(150,100,80,0.14)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, Wd, 1080);
 
-    aplicarCores(1);
+    aplicarCores(Sv && Sv.tomTexto !== undefined ? Sv.tomTexto : 1);     // 1 = texto escuro; 0 = claro (noite, vale)
     const vis = legenda.atualizar(t, A);
     atualizarAberturas(t);
     const abPeso = Math.max(...aberturas.map((x) => x.peso(t)));

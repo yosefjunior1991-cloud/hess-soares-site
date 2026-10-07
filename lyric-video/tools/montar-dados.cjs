@@ -59,16 +59,19 @@ const silabasPt = (p) => (p.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase
 const semNikud = (s) => s.normalize('NFD').replace(/[֑-ׇ]/g, '').replace(/[̀-ͯ]/g, '').toLowerCase();
 const DESTAQUE_HE = /אהב|עולם|חיי|אלהים|רוח|מים|קדים|שבר|עלו|מוסר|מחס|מצוד|אבטח|כנפ|אברת|מלאכ|ישוע|עליון|שדי|אדני/;
 const DESTAQUE_PT = /^(amor|amou|vida|mundo|filho|deus|cre|confia|esperanca|renascer|resgatar|eterna|vivera|espirito|aguas|vento|caminho|sopro|jugo|correntes|livres|quebrado|rei|refugio|fortaleza|asas|anjos|abrigo|confi|livrar|salva|esconderijo|altissimo|todo-poder|escudo|muralha|adonai)/;
-const ehDestaque = (palavra) => {
+// extras: palavras de destaque próprias da música (animacao.json -> "destaques": {"pt": [...], "he": [...]}),
+// somadas às de sempre sem mudar as outras músicas
+const ehDestaque = (palavra, extras) => {
   const s = semNikud(palavra).replace(/[.,;:!?"“”]/g, '');
-  return eHebraico(palavra) ? DESTAQUE_HE.test(s) : DESTAQUE_PT.test(s);
+  if (eHebraico(palavra)) return DESTAQUE_HE.test(s) || !!(extras && extras.he && extras.he.test(s));
+  return DESTAQUE_PT.test(s) || !!(extras && extras.pt && extras.pt.test(s));
 };
 
 // Ritmo da música: ~0,62 s por sílaba. Se a legenda dura mais que isso (nota sustentada ou
 // instrumental), a última palavra fica acesa e "respira" até o fim da legenda.
 const SEG_POR_SILABA = 0.62;
 
-function palavrasDaLinha(texto, ini, fim) {
+function palavrasDaLinha(texto, ini, fim, extras) {
   const hebraico = eHebraico(texto);
   const toks = texto.split(/\s+/).filter(Boolean);
   const sil = toks.map((p) => (hebraico ? silabasHebraico(p) : silabasPt(p)));
@@ -80,7 +83,7 @@ function palavrasDaLinha(texto, ini, fim) {
     const a = ini + (acumulado / total) * vao;
     acumulado += sil[k];
     const b = ini + (acumulado / total) * vao;
-    return { txt, ini: +a.toFixed(3), fim: +b.toFixed(3), destaque: ehDestaque(txt) };
+    return { txt, ini: +a.toFixed(3), fim: +b.toFixed(3), destaque: ehDestaque(txt, extras) };
   });
 }
 
@@ -107,6 +110,11 @@ function lerParte(pastaP, inicio, indice) {
   // animacao.json (opcional, fica junto da música, nunca neste repositório): trechos da letra que disparam
   // os momentos da animação de cada tema (ex.: a frase em que uma corrente arrebenta)
   const anim = lerJson(path.join(pastaP, 'animacao.json'));
+  const dq = anim.destaques || {};
+  const destaquesExtra = {
+    pt: dq.pt && dq.pt.length ? new RegExp('^(' + dq.pt.map((w) => semNikud(w).toLowerCase()).join('|') + ')') : null,
+    he: dq.he && dq.he.length ? new RegExp(dq.he.map((w) => semNikud(w)).join('|')) : null,
+  };
   const analise = lerJson(path.join(DADOS, `audio-${nome}.json`), null) || lerJson(path.join(DADOS, 'audio.json'), { duracao: 0 });
 
   const linhas = cues.map((c, i) => {
@@ -116,7 +124,7 @@ function lerParte(pastaP, inicio, indice) {
     const translit = hebraico && extras.length >= 2 ? extras[0] : '';
     const traducao = extras.length >= 2 ? extras[1] : extras[0] || '';
     const ini = c.ini + inicio, fim = c.fim + inicio;
-    return { i: 0, ini, fim, texto, hebraico, translit, traducao, palavras: palavrasDaLinha(texto, ini, fim), bloco: 0, parte: indice };
+    return { i: 0, ini, fim, texto, hebraico, translit, traducao, palavras: palavrasDaLinha(texto, ini, fim, destaquesExtra), bloco: 0, parte: indice };
   });
   if (Array.isArray(meta.blocos) && meta.blocos.length === linhas.length) {
     linhas.forEach((l, i) => { l.bloco = meta.blocos[i]; });

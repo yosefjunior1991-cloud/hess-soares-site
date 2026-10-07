@@ -32,6 +32,9 @@ Para cada música nova (áudio + legenda + imagem):
 
 Correções pedidas na conferência refazem a etapa 1 antes de seguir para a 2.
 
+**Formato:** o vertical (9:16) serve só para a conferência da legenda; o **clipe final é sempre 16:9**, mesmo que o
+`config.json` da música liste apenas `9:16` (essa lista vale para os vídeos do canal gerados pelo workflow).
+
 ## Como usar
 
 Requisitos: Node 20+, [Playwright](https://playwright.dev) com Chromium e ffmpeg (com libx264 e AAC).
@@ -110,6 +113,30 @@ Os instantes saem do **texto da legenda**; os trechos que os disparam ficam em `
 node tools/renderizar.cjs --musica $MUS/salmo-91 --temas salmo91 --crf 25 --tune animation --saida out/salmo-91_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Salmo 23 (`--temas salmo23`)
+
+A imagem da música era só um fundo preto, então o cenário foi criado a partir da letra inteira (`src/salmo23.js` e
+`src/salmo23-seres.js`). O "eu" do salmo é um cordeirinho e o Pastor aparece como uma **figura de luz, sem rosto**. A jornada:
+
+- a lira de Davi toca e a luz dela forma o Pastor; o rebanho chega; o pasto cresce e o cordeiro se deita; a lagoa tranquila onde ele bebe;
+  uma flor murcha que revive quando a alma é restaurada;
+- o caminho fica dourado e os dois caminham (o mundo rola, os pés não patinam); a luz do Nome pulsa no alto; anéis de luz no chão;
+- o vale da sombra: paredes de rocha que se erguem do chão, escuridão com o lampião do Pastor, lobos de sombra na crista que recuam
+  quando a luz cresce;
+- a vara e o cajado erguidos; o cajado abraça o cordeiro; a mesa surge com o Pastor atrás dela, como anfitrião, diante dos lobos
+  que não passam do círculo de luz; a unção com óleo; o cálice que transborda; duas pombas (bondade e misericórdia) passam a segui-lo;
+- a noite no vale: o Pastor volta, se ajoelha e o leva nos ombros sob as estrelas (zoom suave, estrelas cadentes, o cordeiro dorme);
+- o amanhecer e a casa de Adonai, cuja porta se abre com luz; o rebanho chega, o dia corre depressa e o fim é ao entardecer.
+
+Gatilhos em `animacao.json` (chaves `mizmor`, `roi`, `echsar`, `pastos`, `aguas`, `restaura`, `justica`, `nome`, `nafshi`, `yancheni`, `andar`,
+`vale`, `temerei`, `comigo`, `vara`, `consolam`, `mesa`, `inimigos`, `unges`, `calice`, `bondade`, `dias`, `gam`, `shivti`, `longos`, `sempre`,
+`yirdefuni`, `kol`); a busca ignora acentos e sinais vocálicos. O mesmo arquivo pode trazer `destaques` (`{"pt": [...], "he": [...]}`):
+palavras extras que ganham a cor de destaque na legenda dessa música.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/salmo-23 --temas salmo23 --crf 25 --tune animation --saida out/salmo-23_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -139,6 +166,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/abertura.js` | Abertura durante a introdução (título em português e hebraico, transliteração, versículo, canal e aviso de direitos); uma por música quando há várias. |
 | `src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js` | Cenário de lago (paleta da imagem) e os dois temas de animação descritos acima. |
 | `src/salmo91.js`, `src/salmo91-seres.js` | Tema do Salmo 91, desenhado do zero a partir da letra (cenário, ciclo dia/noite, asas, escudo, peregrino, anjos, leão, serpente, dragão...). |
+| `src/salmo23.js`, `src/salmo23-seres.js` | Tema do Salmo 23, desenhado do zero a partir da letra (cordeirinho, Pastor de luz, vale, mesa, cálice, casa de Adonai...). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
