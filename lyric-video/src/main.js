@@ -148,7 +148,7 @@
 
 
   // ---------------------------------------------------------------- lago: uma cena por música, com transição suave entre elas
-  const FABRICAS = { aguas: window.TemaAguas, correntes: window.TemaCorrentes, salmo91: window.TemaSalmo91, salmo23: window.TemaSalmo23 };
+  const FABRICAS = { aguas: window.TemaAguas, correntes: window.TemaCorrentes, salmo91: window.TemaSalmo91, salmo23: window.TemaSalmo23, painosso: window.TemaPaiNosso };
   const temas = lago ? partes.map((p) => FABRICAS[p.tema].criar(musica, p, Wd)) : [];
   let fora = null;
   const pombaL = (hex) => (hex === '#DCD3EE' ? '#F6DCCB' : hex);

@@ -137,6 +137,28 @@ palavras extras que ganham a cor de destaque na legenda dessa música.
 node tools/renderizar.cjs --musica $MUS/salmo-23 --temas salmo23 --crf 25 --tune animation --saida out/salmo-23_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Pai Nosso em Aramaico (`--temas painosso`)
+
+Também com imagem preta, criado a partir da letra (`src/painosso.js` e `src/painosso-seres.js`). Uma aldeia da Galileia à beira do
+lago, vista por uma câmera que passeia por um mundo largo (terraço, pátio com forno e poço, campo de trigo, bifurcação do caminho,
+alto do monte). Uma menina e o pai são os protagonistas; **o Pai do céu não é retratado**: a presença Dele é sempre luz do alto.
+
+- noite no terraço; a cidade de nuvens (o Reino) surge sobre o horizonte e o lago a reflete; o dia nasce;
+- o pão sai do forno; o fardo do pai se desfaz em luz; o vizinho traz um pergaminho de dívida, que vira pétalas, e os dois se abraçam;
+  as duas famílias repartem o pão;
+- no campo, cada vinda do Reino é um feixe de luz do alto e uma onda dourada no trigo;
+- na bifurcação: tempestade, chuva, uma mata escura com brilhos falsos; o raio de sol rompe as nuvens, pegadas de luz, corações acesos;
+- no monte: coroa de luz, rajada de raios, chuva dourada, anéis que se abrem, arco-íris; o pôr do sol com toda a família;
+- à noite, na margem, a aldeia solta lanternas de papel em grupos; elas sobem e viram estrelas; a menina adormece no colo do pai.
+
+Gatilhos em `animacao.json`: `abuna`, `shemach`, `teitei`, `yitaved`, `kedi`, `pai_pt`, `santo`, `venha`, `vontade`, `terra`, `comoceus`, `pao`,
+`pao2`, `perdoa`, `perdoamos`, `devem`, `lachma`, `yomana`, `shevok`, `kediaf`, `shevakna`, `tentacao`, `livra`, `passos`, `coracao`, `conduz`,
+`reino`, `poder`, `gloria`, `sempre`, `nisyona`, `bisha`, `dilach`, `chayla`, `lealam`, `amen`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/pai-nosso-aramaico --temas painosso --crf 25 --tune animation --saida out/pai-nosso-aramaico_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -167,6 +189,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js` | Cenário de lago (paleta da imagem) e os dois temas de animação descritos acima. |
 | `src/salmo91.js`, `src/salmo91-seres.js` | Tema do Salmo 91, desenhado do zero a partir da letra (cenário, ciclo dia/noite, asas, escudo, peregrino, anjos, leão, serpente, dragão...). |
 | `src/salmo23.js`, `src/salmo23-seres.js` | Tema do Salmo 23, desenhado do zero a partir da letra (cordeirinho, Pastor de luz, vale, mesa, cálice, casa de Adonai...). |
+| `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, cidade de nuvens). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
