@@ -1,16 +1,26 @@
 # Hess e Soares Advogados
 
-> Escritório de advocacia com unidades em Blumenau e Barra Velha (SC, Brasil), atuando em Direito Civil, Imobiliário, Família, Sucessões, Previdenciário e Trabalhista, além de Assessoria Empresarial. Atendimento presencial e por telefone, WhatsApp e videochamada em toda a região do Vale Europeu, Vale do Itajaí e Litoral Norte de Santa Catarina.
+> Escritório de advocacia com unidades em Blumenau e Barra Velha (SC, Brasil), atuando em Direito Civil, Imobiliário, Família, Sucessões, Previdenciário (INSS) e Trabalhista, além de Assessoria Empresarial. Atendimento presencial e por telefone, WhatsApp e videochamada em toda a região do Vale Europeu, Vale do Itajaí e Litoral Norte de Santa Catarina. Avaliação 5,0 no Google (24 avaliações).
 
-Site institucional de página única (single-page). Todo o conteúdo está em https://hessesoares.com.br/, organizado nas seções abaixo (âncoras da mesma página).
+Site institucional de página única (single-page). Todo o conteúdo está em https://hessesoares.com.br/, organizado nas seções abaixo (âncoras da mesma página). Última atualização deste resumo: 07/10/2026.
+
+## Quem somos
+
+- Dr. Nilton Djhone Soares (OAB/SC 54.436) — Direito Civil, Imobiliário e Assessoria Empresarial
+- Dr. Elton Claus Hess dos Santos (OAB/SC 52.635) — Direito Previdenciário e Trabalhista
+- Dra. Pamela M. R. Soares (OAB/SC 63.070) — Família, Sucessões e Extrajudicial
 
 ## Principal
 
 - [Início](https://hessesoares.com.br/#inicio): Apresentação do escritório e chamada para agendamento de consulta.
 - [Áreas de atuação](https://hessesoares.com.br/#areas): Direito Civil, Imobiliário, Família, Sucessões, Assessoria Empresarial, Previdenciário e Trabalhista.
 - [Sobre nós](https://hessesoares.com.br/#sobre): História do escritório e equipe de advogados.
-- [Perguntas frequentes](https://hessesoares.com.br/#faq): Dúvidas comuns sobre inventário, revisão de aposentadoria/INSS, regularização de imóveis, verbas rescisórias e partilha de bens em divórcio.
+- [Perguntas frequentes](https://hessesoares.com.br/#faq): Dúvidas comuns sobre atendimento fora das cidades-sede, atendimento remoto, inventário, revisão de aposentadoria/INSS, regularização de imóveis sem escritura, verbas rescisórias, guarda compartilhada e partilha de bens em divórcio.
 - [Contato](https://hessesoares.com.br/#contato): Endereços, telefone e formas de agendamento das duas unidades (Blumenau e Barra Velha).
+
+## Região atendida
+
+Blumenau, Barra Velha, Pomerode, Timbó, Indaial, Gaspar, Brusque, Itajaí, Balneário Camboriú, Navegantes e Piçarras (SC) — presencialmente nas duas unidades ou à distância (telefone, WhatsApp e videochamada).
 
 ## Dados de contato
 
@@ -18,8 +28,10 @@ Site institucional de página única (single-page). Todo o conteúdo está em ht
 - E-mail: hsadvogados@outlook.com.br
 - Unidade Blumenau: Av. Dois de Setembro, nº 2.700, SL 04, Bairro Itoupava Norte, Blumenau/SC
 - Unidade Barra Velha: R. Ludovico Caeteno, 199, Itajubá II, Barra Velha/SC
-- Horário: segunda a sexta, 09:00–18:00
+- Horário (as duas unidades): segunda a sexta, 09:00–18:00
+- Instagram: https://www.instagram.com/hess_e_soares/
 
 ## Optional
 
-- [Dados estruturados (JSON-LD)](https://hessesoares.com.br/#inicio): Schema.org LegalService e FAQPage com detalhes completos de endereço, equipe, avaliações e perguntas frequentes — ver `<script type="application/ld+json">` no HTML da página.
+- [Dados estruturados (JSON-LD)](https://hessesoares.com.br/#inicio): Schema.org LegalService (uma por unidade) e FAQPage com endereço, equipe, avaliações e perguntas frequentes — ver `<script type="application/ld+json">` no HTML da página.
+- [Sitemap](https://hessesoares.com.br/sitemap.xml)
