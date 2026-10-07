@@ -159,6 +159,31 @@ Gatilhos em `animacao.json`: `abuna`, `shemach`, `teitei`, `yitaved`, `kedi`, `p
 node tools/renderizar.cjs --musica $MUS/pai-nosso-aramaico --temas painosso --crf 25 --tune animation --saida out/pai-nosso-aramaico_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Bênção Sacerdotal (`--temas bencao`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/bencao.js` e `src/bencao-seres.js`). Uma pequena
+caravana (um ancião, um homem, uma mulher e um menino) recebe a bênção de um sacerdote (kohen) no alto de uma colina, de madrugada,
+com as mãos na posição clássica (o "V" entre os dedos), e sai a caminhar por um mundo largo, de câmera que acompanha o grupo.
+**O Pai não é retratado**: a presença Dele é sempre luz. A bênção em três partes vira três imagens que voltam toda vez que a letra as repete:
+
+- a luz que cai como chuva (no começo, escorre das mãos do sacerdote) e as pétalas;
+- um talit de luz (listras azuis e franjas) que cobre a caravana; à noite vira uma cúpula de estrelas;
+- o sol que nasce (à noite, uma estrela que se acende e grandes "olhos" de luz no céu) e as flores que brotam pelo caminho;
+- o rosto que se levanta e o caminho dourado à frente; pombas e uma onda branca de luz.
+
+Entre uma coisa e outra: o dia que corre, o oásis onde dormem sob a coluna de luz, a aurora, uma ponte de madeira sobre o rio, o pão
+repartido no pôr do sol, a letra shin (o sinal da bênção) e, no fim, a colina outra vez, agora com todo o povo reunido e o sacerdote
+de braços erguidos sob as estrelas. A velocidade do mundo muda por janelas de tempo (caminhada, pouso, caminhada rápida), sempre com
+os pés travados ao chão.
+
+Gatilhos em `animacao.json`: `ben`, `gua`, `ros`, `gra`, `lev`, `paz`, `shalom`, `caminhar`, `mao`, `noite`, `guardanoite`, `olhos`,
+`pazaqui`, `passo`, `presente`, `levantar`, `luzbrilhe`, `deitar`, `pazenvolver`, `rostonos`, `resplandecer`, `acompanhe`, `nome`,
+`voltefinal`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/bencao-sacerdotal --temas bencao --crf 25 --tune animation --saida out/bencao-sacerdotal_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -190,6 +215,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/salmo91.js`, `src/salmo91-seres.js` | Tema do Salmo 91, desenhado do zero a partir da letra (cenário, ciclo dia/noite, asas, escudo, peregrino, anjos, leão, serpente, dragão...). |
 | `src/salmo23.js`, `src/salmo23-seres.js` | Tema do Salmo 23, desenhado do zero a partir da letra (cordeirinho, Pastor de luz, vale, mesa, cálice, casa de Adonai...). |
 | `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, o Templo de Jerusalém no horizonte). |
+| `src/bencao.js`, `src/bencao-seres.js` | Tema da Bênção Sacerdotal (sacerdote de frente, mãos da bênção, talit de luz, caravana, oásis, aurora, ponte, colina final com o povo). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
