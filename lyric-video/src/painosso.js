@@ -1,6 +1,6 @@
 // Tema "Pai Nosso em Aramaico", criado do zero a partir da letra inteira (a imagem da música é só um fundo preto), para o
 // vídeo final em 16:9. Uma aldeia da Galileia à beira do lago: uma menina e o pai rezam no terraço sob as estrelas; no alto,
-// sobre o horizonte, aparece a cidade de nuvens (o Reino), e o lago a reflete: a terra espelha o céu. O dia nasce, o pão
+// no horizonte, aparece o Templo de Jerusalém (o Reino), e o lago o reflete: a terra espelha o céu. O dia nasce, o pão
 // sai do forno, o fardo das dívidas se desfaz em luz e o vizinho é perdoado; todos repartem o pão. No campo, cada vinda do
 // Reino é um feixe de luz que doura o trigo. Na bifurcação do caminho vem a tempestade e o brilho falso da tentação; a luz
 // livra, os passos se acendem, o coração brilha e o caminho leva ao alto do monte: coroa de luz, rajada de raios, chuva dourada.
@@ -306,7 +306,13 @@
       ctx.restore();
     }
 
-    // ---------------------------------------------------------------- camadas de fundo (paralaxe): montanhas, cidade do Reino e lago
+    // ---------------------------------------------------------------- camadas de fundo (paralaxe): montanhas, o Templo e o lago
+    // o Templo fica na mesma camada do lago (mesma paralaxe e mesmo zoom), para o reflexo acompanhá-lo em qualquer movimento de câmera
+    const P_LAGO = 0.05;                                                       // o Templo fica longe: anda pouco com a câmera
+    const telaFundo = (S, p, X, Y) => {                                        // de coordenadas de uma camada de fundo para a tela
+      const c = S.cam, zb = 1 + (c.z - 1) * p, ox = (c.x - S.W / 2) * p, oy = (c.y - ALT / 2) * p;
+      return [(X - S.W / 2 - ox) * zb + S.W / 2, (Y - ALT / 2 - oy) * zb + ALT / 2, zb];
+    };
     function fundo(ctx, S, p, desenha) {
       const c = S.cam, zb = 1 + (c.z - 1) * p, ox = (c.x - S.W / 2) * p, oy = (c.y - ALT / 2) * p;
       ctx.save(); ctx.translate(S.W / 2, ALT / 2); ctx.scale(zb, zb); ctx.translate(-S.W / 2 - ox, -ALT / 2 - oy);
@@ -331,12 +337,12 @@
         brilhoRadial(ctx, X, Y, 6, K.luzOuro, 0.8 * S.noite * (0.6 + 0.4 * Math.sin(S.t * 2 + i)));
       }
     }
-    const CIDADE_X = () => W * 0.73, CIDADE_Y = 642, CIDADE_S = 0.62;
-    function cidadeAlfa(S) {
+    const TEMPLO_X = () => W * 0.78, TEMPLO_Y = 652, TEMPLO_S = 0.6;            // base do Templo na linha d'água do lago
+    function temploAlfa(S) {
       const a = smooth(tTeitei[0] - 0.4, tTeitei[0] + 2.2, S.tl) * (1 - 0.85 * S.tempestade);
-      return a * (0.72 + 0.28 * S.reino) * (1 - 0.35 * S.noite * (1 - S.reino));
+      return a * (0.9 + 0.1 * S.reino) * (1 - 0.2 * S.noite);
     }
-    function cidadeBrilho(S) {
+    function temploBrilho(S) {
       let b = 0.2 * S.reino;
       for (const [t0] of FEIXES) b = Math.max(b, pulso(t0, 0.5, 2.6, S.tl));
       for (const t0 of [...tReino, tDilach]) b = Math.max(b, pulso(t0, 0.6, 3, S.tl));
@@ -348,12 +354,12 @@
       g.addColorStop(0, css(ml(ml(c.hor, H('#bfe6ee'), 0.45), K.luz, 0.1))); g.addColorStop(0.5, css(ml(c.mid, H('#a9dbe6'), 0.5))); g.addColorStop(1, css(ml(c.top, H('#9fcfe0'), 0.55)));
       ctx.fillStyle = g; ctx.fillRect(x0, yA, x1 - x0, 1000);
       ctx.save(); ctx.beginPath(); ctx.rect(x0, yA, x1 - x0, 1000); ctx.clip();
-      // reflexo da cidade do Reino (mais forte nos gatilhos `kedi`, `terra` e `comoceus`)
-      const ca = cidadeAlfa(S);
+      // reflexo do Templo, espelhado exatamente na linha d'água (mais forte nos gatilhos `kedi`, `terra` e `comoceus`)
+      const ca = temploAlfa(S);
       if (ca > 0.02) {
         const refl = 0.3 + 0.45 * Math.max(pulso(tKedi, 1, 6, S.tl), ...tTerra.map((t0) => pulso(t0, 1.2, 7, S.tl)), pulso(tComoCeus, 1, 6, S.tl));
         ctx.save(); ctx.translate(0, 2 * yA); ctx.scale(1, -1); ctx.globalAlpha *= refl;
-        R.cidade(ctx, CIDADE_X(), CIDADE_Y + 10, CIDADE_S, { t: S.t, brilho: cidadeBrilho(S), alfa: ca });
+        R.templo(ctx, TEMPLO_X(), TEMPLO_Y, TEMPLO_S, { t: S.t, brilho: temploBrilho(S), noite: S.noite, alfa: ca });
         ctx.restore();
       }
       // reflexos do sol, da lua e das estrelas
@@ -409,12 +415,13 @@
     // coroa de luz, rajada de raios, anel que se abre e chuva dourada (tela)
     function gloria(ctx, S) {
       const tl = S.tl;
-      const cx = CIDADE_X(), cy = CIDADE_Y - 262;
+      const [cx, base, zb] = telaFundo(S, P_LAGO, TEMPLO_X(), TEMPLO_Y), alto = 284 * TEMPLO_S * zb;   // topo do Santuário na tela
+      const cy = base - alto - 46 * zb;
       let coroa = 0;
       for (const t0 of [tReino[0], tDilach, tReino[1], tReino[2]]) coroa = Math.max(coroa, win(t0 - 0.2, t0 + 1.0, t0 + 5.5, t0 + 7.5, tl));
       coroa = Math.max(coroa, 0.85 * win(tDilach - 0.2, tDilach + 1, tAbuna[3] - 2, tAbuna[3] + 1, tl));
       if (coroa > 0.01) {
-        ctx.save(); ctx.translate(cx, cy + 20 * (1 - coroa)); ctx.scale(0.72, 0.72); ctx.globalAlpha *= coroa;
+        ctx.save(); ctx.translate(cx, cy + 20 * (1 - coroa)); ctx.scale(0.6 * zb, 0.6 * zb); ctx.globalAlpha *= coroa;
         brilhoRadial(ctx, 0, 0, 260, K.luzOuro, 0.55);
         ctx.strokeStyle = css(K.ouroForte); ctx.fillStyle = css(K.luzOuro, 0.55); ctx.lineWidth = 5; ctx.lineJoin = 'round';
         ctx.beginPath(); ctx.moveTo(-90, 40);
@@ -426,11 +433,11 @@
         ctx.fillStyle = css(H('#bfe1ff')); ctx.beginPath(); ctx.arc(-46, 22, 6, 0, TAU); ctx.arc(46, 22, 6, 0, TAU); ctx.fill();
         ctx.restore();
       }
-      // poder: rajada de raios a partir da cidade
+      // poder: rajada de raios a partir do Santuário
       let poder = 0;
       for (const t0 of [...tPoder, tChayla]) poder = Math.max(poder, win(t0 - 0.1, t0 + 0.5, t0 + 2.0, t0 + 3.6, tl));
       if (poder > 0.01) {
-        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.translate(cx, cy + 140);
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.translate(cx, base - alto * 0.6);
         for (let i = 0; i < 18; i++) {
           const a = (i / 18) * TAU + tl * 0.05, L = 900 * (0.6 + 0.4 * poder);
           const g = ctx.createLinearGradient(0, 0, L, 0); g.addColorStop(0, css(K.luzOuro, 0.22 * poder)); g.addColorStop(1, css(K.luzOuro, 0));
@@ -455,7 +462,7 @@
         const u = (tl - t0) / 4.5;
         if (u < 0 || u > 1) continue;
         ctx.strokeStyle = css(K.luzOuro, 0.7 * (1 - u)); ctx.lineWidth = 4;
-        for (let k = 0; k < 3; k++) { const v = u - k * 0.1; if (v <= 0) continue; ctx.beginPath(); ctx.ellipse(cx, cy + 150, 80 + 1200 * v, 30 + 420 * v, 0, 0, TAU); ctx.stroke(); }
+        for (let k = 0; k < 3; k++) { const v = u - k * 0.1; if (v <= 0) continue; ctx.beginPath(); ctx.ellipse(cx, base - alto * 0.6, 80 + 1200 * v, 30 + 420 * v, 0, 0, TAU); ctx.stroke(); }
       }
     }
 
@@ -776,11 +783,11 @@
       raios(ctx, S, 0.3 * Math.max(...tReino.map((t0) => pulso(t0, 0.6, 4, tl)), pulso(tYomana, 0.6, 4, tl)));
       tempestade(ctx, S);
       lanternasCeu(ctx, S);
-      // fundo com paralaxe: montanhas, cidade do Reino, lago
-      fundo(ctx, S, 0.06, (x0, x1) => montanhas(ctx, S, x0, x1));
-      fundo(ctx, S, 0.04, () => { const a = cidadeAlfa(S); if (a > 0.01) R.cidade(ctx, CIDADE_X(), CIDADE_Y, CIDADE_S, { t: S.t, brilho: cidadeBrilho(S), alfa: a }); });
+      // fundo com paralaxe: montanhas; o Templo e o lago na mesma camada
+      fundo(ctx, S, 0.035, (x0, x1) => montanhas(ctx, S, x0, x1));
+      fundo(ctx, S, P_LAGO, () => { const a = temploAlfa(S); if (a > 0.01) R.templo(ctx, TEMPLO_X(), TEMPLO_Y, TEMPLO_S, { t: S.t, brilho: temploBrilho(S), noite: S.noite, alfa: a }); });
       gloria(ctx, S);
-      fundo(ctx, S, 0.12, (x0, x1) => lago(ctx, S, x0, x1));
+      fundo(ctx, S, P_LAGO, (x0, x1) => lago(ctx, S, x0, x1));
       // mundo
       const c = S.cam, x0 = c.x - W / (2 * c.z) - 60, x1 = c.x + W / (2 * c.z) + 60;
       ctx.save(); ctx.translate(W / 2, ALT / 2); ctx.scale(c.z, c.z); ctx.translate(-c.x, -c.y);

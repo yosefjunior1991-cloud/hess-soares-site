@@ -1,6 +1,6 @@
 // Peças desenhadas do tema "Pai Nosso em Aramaico": a menina, o pai, a mãe, o vizinho e os aldeões (de lado, com
 // rostos simples); as casas de teto plano de uma aldeia da Galileia, o forno de barro, a esteira com a mesa baixa, o poço,
-// oliveiras, palmeiras e ciprestes; a lanterna de papel que sobe no céu e a cidade de nuvens (o Reino) no alto.
+// oliveiras, palmeiras e ciprestes; a lanterna de papel que sobe no céu e o Templo de Jerusalém no horizonte.
 // Deus não é retratado: a presença do Pai é sempre luz que vem do céu. Tudo em tons pastéis, desenhado em código;
 // cada função desenha em coordenadas locais (base em y = 0).
 (function (G) {
@@ -386,46 +386,103 @@
     ctx.restore();
   }
 
-  // ---------------------------------------------------------------- a cidade de nuvens (o Reino), centro x, base y
-  function cidade(ctx, x, y, s, o) {
-    const t = o.t || 0, br = clamp(o.brilho || 0), A = o.alfa === undefined ? 1 : o.alfa;
+  // ---------------------------------------------------------------- o Templo de Jerusalém (o Segundo Templo, como na maquete clássica),
+  // visto do leste, no horizonte: a muralha do Monte do Templo em pedras herodianas, o Pórtico Real à esquerda, os pórticos
+  // à direita, os pátios com seus portões, o Santuário de fachada branca e dourada no centro e a Fortaleza Antônia na ponta.
+  // x, y = centro da base; o: brilho 0..1 (luz dourada), noite 0..1 (portões acesos), alfa, t
+  function templo(ctx, x, y, s, o) {
+    const t = o.t || 0, br = clamp(o.brilho || 0), noite = clamp(o.noite || 0), A = o.alfa === undefined ? 1 : o.alfa;
     if (A < 0.01) return;
+    const pedra = H('#f4e8d9'), pedraSom = H('#d9cbe2'), pedraClara = H('#fffaf2'), telha = H('#e3cde9'), antonia = H('#ecdccd');
+    const ouro = K.ouroForte, ouroClaro = K.ouro, porta = ml(H('#e9c27a'), K.luzOuro, 0.4 * noite);
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.globalAlpha *= A;
-    brilhoRadial(ctx, 0, -120, 520, K.luzOuro, 0.35 + 0.4 * br);
-    // torres e cúpulas
-    const TORRES = [[-250, 120, 34], [-180, 170, 40], [-100, 140, 36], [0, 230, 62], [100, 150, 36], [180, 175, 40], [250, 125, 34]];
-    for (const [tx, th, tw] of TORRES) {
-      const g = ctx.createLinearGradient(0, -th - 40, 0, 0);
-      g.addColorStop(0, css(K.luz)); g.addColorStop(1, css(ml(K.lilas, K.creme, 0.5)));
-      ctx.fillStyle = g; ctx.fillRect(tx - tw / 2, -th, tw, th);
-      ctx.beginPath(); ctx.arc(tx, -th, tw / 2, Math.PI, TAU); ctx.fill();
-      ctx.strokeStyle = css(K.ouroForte, 0.75); ctx.lineWidth = 2.2;
-      ctx.beginPath(); ctx.arc(tx, -th, tw / 2, Math.PI, TAU); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(tx, -th - tw / 2); ctx.lineTo(tx, -th - tw / 2 - 16); ctx.stroke();
-      disco(ctx, tx, -th - tw / 2 - 18, 3, css(K.ouro));
-      for (let k = 0; k < 2; k++) {                                         // janelas em arco que brilham
-        const wy = -th + 26 + k * 34;
-        if (wy > -14) continue;
-        ctx.fillStyle = css(ml(K.luzOuro, K.ouro, 0.3), 0.6 + 0.4 * br);
-        ctx.beginPath(); ctx.moveTo(tx - 5, wy + 12); ctx.lineTo(tx - 5, wy); ctx.arc(tx, wy, 5, Math.PI, 0); ctx.lineTo(tx + 5, wy + 12); ctx.closePath(); ctx.fill();
-      }
+    brilhoRadial(ctx, 0, -190, 520, K.luzOuro, 0.22 + 0.4 * br);
+    const bloco = (x0, y0, x1, y1, cor, sombra) => {
+      const g = ctx.createLinearGradient(0, y0, 0, y1);
+      g.addColorStop(0, css(ml(cor, K.branco, 0.35))); g.addColorStop(1, css(sombra || cor));
+      ctx.fillStyle = g; ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    };
+    const arco = (cx, base, l, h, cor) => {
+      ctx.fillStyle = css(cor); ctx.beginPath(); ctx.moveTo(cx - l / 2, base); ctx.lineTo(cx - l / 2, base - h + l / 2); ctx.arc(cx, base - h + l / 2, l / 2, Math.PI, 0); ctx.lineTo(cx + l / 2, base); ctx.closePath(); ctx.fill();
+    };
+    const colunas = (x0, x1, y0, y1, passo) => {
+      ctx.strokeStyle = css(pedraClara); ctx.lineWidth = 3.2;
+      for (let cx = x0 + passo / 2; cx < x1; cx += passo) { ctx.beginPath(); ctx.moveTo(cx, y0); ctx.lineTo(cx, y1); ctx.stroke(); }
+      ctx.fillStyle = css(pedraSom, 0.55);
+      for (let cx = x0 + passo; cx < x1 - 2; cx += passo) ctx.fillRect(cx - passo / 2 + 2.5, y0 + 2, passo - 5, y1 - y0 - 2);
+    };
+    // o monte sob a muralha, com algumas árvores
+    ctx.fillStyle = css(H('#d6d2ee'));
+    ctx.beginPath(); ctx.moveTo(-430, 6); ctx.quadraticCurveTo(-360, -22, -300, -14); ctx.lineTo(380, -14); ctx.quadraticCurveTo(430, -20, 470, 6); ctx.closePath(); ctx.fill();
+    for (const [tx, h] of [[-372, 30], [-352, 22], [404, 26], [424, 34]]) { ctx.fillStyle = css(H('#b9dccb')); ctx.beginPath(); ctx.ellipse(tx, -10 - h / 2, 6, h / 2, 0, 0, TAU); ctx.fill(); }
+    // muralha do Monte do Templo (pedras herodianas com a margem clara)
+    bloco(-320, -98, 320, -10, pedra, pedraSom);
+    ctx.strokeStyle = css(pedraSom, 0.8); ctx.lineWidth = 1.3;
+    for (let r = 0; r < 8; r++) {
+      const yy = -98 + 11 * r;
+      ctx.beginPath(); ctx.moveTo(-320, yy); ctx.lineTo(320, yy); ctx.stroke();
+      for (let cx = -320 + (r % 2) * 17; cx < 320; cx += 34) { ctx.beginPath(); ctx.moveTo(cx, yy); ctx.lineTo(cx, yy + 11); ctx.stroke(); }
     }
-    // muralha com portões
-    ctx.fillStyle = css(ml(K.luz, K.lilas, 0.25)); ctx.beginPath(); ctx.roundRect(-300, -64, 600, 64, 6); ctx.fill();
-    ctx.strokeStyle = css(K.ouroForte, 0.6); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-300, -64); ctx.lineTo(300, -64); ctx.stroke();
-    for (let i = -2; i <= 2; i++) {
-      const gx = i * 110;
-      ctx.fillStyle = css(K.luzOuro, 0.75 + 0.25 * br); ctx.beginPath(); ctx.moveTo(gx - 13, 0); ctx.lineTo(gx - 13, -30); ctx.arc(gx, -30, 13, Math.PI, 0); ctx.lineTo(gx + 13, 0); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = css(pedraClara, 0.7); ctx.lineWidth = 1;
+    for (let r = 0; r < 8; r++) { const yy = -96 + 11 * r; ctx.beginPath(); ctx.moveTo(-318, yy); ctx.lineTo(318, yy); ctx.stroke(); }
+    bloco(298, -112, 322, -98, pedra, pedraSom);                                        // pináculo do canto
+    // Pórtico Real (à esquerda): colunata longa, telhado e a nave central mais alta
+    bloco(-316, -140, -122, -98, pedra, pedraSom);
+    colunas(-316, -122, -138, -98, 13);
+    ctx.fillStyle = css(telha); ctx.beginPath(); ctx.moveTo(-322, -140); ctx.lineTo(-116, -140); ctx.lineTo(-124, -150); ctx.lineTo(-314, -150); ctx.closePath(); ctx.fill();
+    bloco(-262, -170, -176, -150, pedra, pedraSom);
+    for (let k = 0; k < 5; k++) arco(-252 + k * 17, -155, 7, 11, ml(pedraSom, porta, noite));
+    ctx.fillStyle = css(telha); ctx.beginPath(); ctx.moveTo(-266, -170); ctx.lineTo(-219, -182); ctx.lineTo(-172, -170); ctx.closePath(); ctx.fill();
+    // pórticos à direita (o Pórtico de Salomão)
+    bloco(126, -128, 298, -98, pedra, pedraSom);
+    colunas(126, 298, -126, -98, 12);
+    ctx.fillStyle = css(telha); ctx.fillRect(122, -134, 180, 7);
+    // Fortaleza Antônia, na ponta direita, com suas torres
+    bloco(322, -150, 380, -14, antonia, pedraSom);
+    for (const [tx, h] of [[326, 196], [368, 214]]) {
+      bloco(tx - 12, -h, tx + 12, -150, antonia, pedraSom);
+      ctx.fillStyle = css(ml(antonia, K.branco, 0.3));
+      for (let k = 0; k < 3; k++) ctx.fillRect(tx - 12 + k * 9, -h - 6, 6, 6);
+      arco(tx, -h + 34, 6, 12, ml(pedraSom, porta, noite));
     }
-    // base de nuvens
-    for (let i = 0; i < 13; i++) {
-      const bx = -360 + i * 60 + Math.sin(t * 0.3 + i) * 6, by = 6 + (i % 3) * 8, r = 44 + 18 * hash1(i * 3.1);
-      const g = ctx.createRadialGradient(bx, by - r * 0.3, r * 0.2, bx, by, r);
-      g.addColorStop(0, css(K.branco, 0.95)); g.addColorStop(1, css(ml(K.lilas, K.rosa, 0.3), 0));
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(bx, by, r, 0, TAU); ctx.fill();
+    // pátio das mulheres e o Portão Formoso
+    bloco(-112, -134, 116, -98, pedra, pedraSom);
+    ctx.fillStyle = css(pedraClara); ctx.fillRect(-114, -138, 232, 5);
+    for (const [gx, l, h] of [[-70, 14, 24], [0, 22, 32], [74, 14, 24]]) arco(gx, -98, l, h, porta);
+    // pátio de Israel, mais alto, com o Portão de Nicanor
+    bloco(-84, -156, 88, -134, pedra, pedraSom);
+    ctx.fillStyle = css(pedraClara); ctx.fillRect(-86, -160, 176, 5);
+    arco(2, -134, 16, 21, ml(porta, H('#e6b98f'), 0.3));
+    // fumaça suave do altar (à frente do Santuário)
+    for (let i = 0; i < 4; i++) {
+      const u = mod(t * 0.07 + i / 4, 1);
+      ctx.fillStyle = css(K.branco, 0.22 * (1 - u)); ctx.beginPath(); ctx.ellipse(-34 + Math.sin(t * 0.4 + i) * 6 - u * 30, -160 - u * 120, 8 + 16 * u, 6 + 10 * u, 0, 0, TAU); ctx.fill();
     }
+    // o Santuário: fachada larga e alta, branca, com ouro; a grande entrada do pórtico e a videira de ouro
+    bloco(-50, -272, 50, -156, pedraClara, pedra);
+    ctx.fillStyle = css(pedraSom, 0.45); ctx.fillRect(34, -272, 16, 116);
+    ctx.strokeStyle = css(ouro, 0.85); ctx.lineWidth = 2.4; ctx.strokeRect(-50, -272, 100, 116);
+    const ge = ctx.createLinearGradient(0, -250, 0, -156);
+    ge.addColorStop(0, css(ml(ouro, K.luz, 0.25 + 0.4 * br))); ge.addColorStop(1, css(ml(H('#d9a85c'), K.luzOuro, 0.5 * noite)));
+    ctx.fillStyle = ge; ctx.fillRect(-15, -250, 30, 94);
+    ctx.strokeStyle = css(ouroClaro); ctx.lineWidth = 2; ctx.strokeRect(-15, -250, 30, 94);
+    ctx.fillStyle = css(H('#c9a24f'), 0.5); ctx.fillRect(-7, -222, 14, 66);                   // a porta de ouro lá dentro
+    ctx.strokeStyle = css(ouroClaro); ctx.lineWidth = 2.2;                                       // videira de ouro sobre a entrada
+    ctx.beginPath(); for (let k = 0; k <= 12; k++) { const vx = -26 + k * 4.4, vy = -256 + Math.sin(k * 1.3) * 2.4; k ? ctx.lineTo(vx, vy) : ctx.moveTo(vx, vy); } ctx.stroke();
+    for (let k = 0; k < 6; k++) { ctx.fillStyle = css(ouro); ctx.beginPath(); ctx.arc(-22 + k * 9, -252, 2.3, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = css(ouro); ctx.fillRect(-52, -276, 104, 5);                                  // cornija dourada
+    for (let k = 0; k <= 13; k++) { const px = -49 + k * 7.5; ctx.beginPath(); ctx.moveTo(px - 1.6, -276); ctx.lineTo(px, -284); ctx.lineTo(px + 1.6, -276); ctx.closePath(); ctx.fill(); }
+    if (br > 0.01) {                                                                              // brilho do Reino
+      ctx.fillStyle = css(K.luz, 0.9 * br);
+      for (let i = 0; i < 6; i++) { const a = t * 0.8 + i * 1.05; brilho4(ctx, Math.cos(a) * 70, -214 + Math.sin(a * 1.3) * 50, 3 + 3 * Math.max(0, Math.sin(t * 3 + i))); }
+    }
+    if (noite > 0.01) for (const [gx, gy] of [[-70, -108], [0, -112], [74, -108], [2, -142], [0, -200]]) brilhoRadial(ctx, gx, gy, 26, K.luzOuro, 0.6 * noite);
+    // névoa clara na base (o templo "pousa" no horizonte)
+    const gn = ctx.createLinearGradient(0, -40, 0, 12);
+    gn.addColorStop(0, css(K.branco, 0)); gn.addColorStop(1, css(ml(K.lilas, K.branco, 0.5), 0.75));
+    ctx.fillStyle = gn; ctx.fillRect(-460, -40, 940, 52);
     ctx.restore();
   }
 
-  G.SeresPN = { K, ROUPA, pessoa, pao, cesto, pergaminho, lanternaCeu, lamparina, coracao, casa, forno, mesaBaixa, poco, oliveira, palmeira, cipreste, cidade };
+  G.SeresPN = { K, ROUPA, pessoa, pao, cesto, pergaminho, lanternaCeu, lamparina, coracao, casa, forno, mesaBaixa, poco, oliveira, palmeira, cipreste, templo };
 })(window);

@@ -141,9 +141,9 @@ node tools/renderizar.cjs --musica $MUS/salmo-23 --temas salmo23 --crf 25 --tune
 
 Também com imagem preta, criado a partir da letra (`src/painosso.js` e `src/painosso-seres.js`). Uma aldeia da Galileia à beira do
 lago, vista por uma câmera que passeia por um mundo largo (terraço, pátio com forno e poço, campo de trigo, bifurcação do caminho,
-alto do monte). Uma menina e o pai são os protagonistas; **o Pai do céu não é retratado**: a presença Dele é sempre luz do alto.
+alto do monte). O Templo e o lago ficam na mesma camada de fundo, para o reflexo acompanhar a câmera. Uma menina e o pai são os protagonistas; **o Pai do céu não é retratado**: a presença Dele é sempre luz do alto.
 
-- noite no terraço; a cidade de nuvens (o Reino) surge sobre o horizonte e o lago a reflete; o dia nasce;
+- noite no terraço; o Templo de Jerusalém (o Segundo Templo, como na maquete clássica) surge no horizonte e o lago o reflete; o dia nasce;
 - o pão sai do forno; o fardo do pai se desfaz em luz; o vizinho traz um pergaminho de dívida, que vira pétalas, e os dois se abraçam;
   as duas famílias repartem o pão;
 - no campo, cada vinda do Reino é um feixe de luz do alto e uma onda dourada no trigo;
@@ -189,7 +189,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/lago.js`, `src/tema-aguas.js`, `src/tema-correntes.js` | Cenário de lago (paleta da imagem) e os dois temas de animação descritos acima. |
 | `src/salmo91.js`, `src/salmo91-seres.js` | Tema do Salmo 91, desenhado do zero a partir da letra (cenário, ciclo dia/noite, asas, escudo, peregrino, anjos, leão, serpente, dragão...). |
 | `src/salmo23.js`, `src/salmo23-seres.js` | Tema do Salmo 23, desenhado do zero a partir da letra (cordeirinho, Pastor de luz, vale, mesa, cálice, casa de Adonai...). |
-| `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, cidade de nuvens). |
+| `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, o Templo de Jerusalém no horizonte). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
