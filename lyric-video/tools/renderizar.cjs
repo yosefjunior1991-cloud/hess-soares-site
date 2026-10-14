@@ -82,25 +82,31 @@ function rodar(script, args) {
 function preparar() {
   fs.mkdirSync(DADOS, { recursive: true });
   const mt = (f) => fs.statSync(f).mtimeMs;
-  const antigo = (arq, fontes) => !fs.existsSync(arq) || fontes.some((f) => mt(f) > mt(arq));
+  // o cache só vale se foi gerado a partir destes mesmos arquivos (senão uma música herdava a análise da anterior)
+  const marca = (fontes) => fontes.map((f) => `${f}:${mt(f)}`).join('|');
+  const marcaDe = (arq) => (fs.existsSync(arq + '.fonte') ? fs.readFileSync(arq + '.fonte', 'utf8') : '');
+  const antigo = (arq, fontes) => !fs.existsSync(arq) || fontes.some((f) => mt(f) > mt(arq)) || marcaDe(arq) !== marca(fontes);
+  const gravarMarca = (arq, fontes) => fs.writeFileSync(arq + '.fonte', marca(fontes));
   const reanalisar = process.argv.includes('--reanalisar');
   const alvoAudio = path.join(DADOS, 'audio.json');
   if (audios.length === 1) {
-    if (antigo(alvoAudio, [audios[0]]) || reanalisar) rodar('analisar-audio.cjs', [audios[0], alvoAudio, String(fps)]);
+    if (antigo(alvoAudio, [audios[0]]) || reanalisar) { rodar('analisar-audio.cjs', [audios[0], alvoAudio, String(fps)]); gravarMarca(alvoAudio, [audios[0]]); }
   } else {
     // uma análise por música (duração, BPM, primeira batida) + o áudio juntado, sem pausa, e a análise dele
     audios.forEach((a, i) => {
       const alvo = path.join(DADOS, `audio-${path.basename(musicaDirs[i])}.json`);
-      if (antigo(alvo, [a]) || reanalisar) rodar('analisar-audio.cjs', [a, alvo, String(fps)]);
+      if (antigo(alvo, [a]) || reanalisar) { rodar('analisar-audio.cjs', [a, alvo, String(fps)]); gravarMarca(alvo, [a]); }
     });
-    if (antigo(ALVO_JUNTO, audios)) {
+    const juntar = antigo(ALVO_JUNTO, audios);
+    if (juntar) {
       const ent = audios.flatMap((a) => ['-i', a]);
       const filtro = audios.map((_, i) => `[${i}:a]aresample=48000,aformat=channel_layouts=stereo[a${i}]`).join(';')
         + `;${audios.map((_, i) => `[a${i}]`).join('')}concat=n=${audios.length}:v=0:a=1[fora]`;
       const r = spawnSync(FFMPEG, ['-y', '-loglevel', 'error', ...ent, '-filter_complex', filtro, '-map', '[fora]', '-c:a', 'pcm_s16le', ALVO_JUNTO], { stdio: 'inherit' });
       if (r.status !== 0) { console.error('falha ao juntar os áudios'); process.exit(1); }
+      gravarMarca(ALVO_JUNTO, audios);
     }
-    if (antigo(alvoAudio, [ALVO_JUNTO]) || reanalisar) rodar('analisar-audio.cjs', [ALVO_JUNTO, alvoAudio, String(fps)]);
+    if (juntar || antigo(alvoAudio, [ALVO_JUNTO]) || reanalisar) { rodar('analisar-audio.cjs', [ALVO_JUNTO, alvoAudio, String(fps)]); gravarMarca(alvoAudio, [ALVO_JUNTO]); }
     audioArq = ALVO_JUNTO;
   }
   if (LAGO) {
