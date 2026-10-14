@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Lyric video</title>
+<style>
+/* Fontes locais (SIL OFL): Inter para o latim e Noto Sans Hebrew para o hebraico com nikud */
+@font-face{font-family:'Inter';src:url('../assets/fonts/inter-latin-wght-normal.woff2') format('woff2');font-weight:100 900;font-style:normal}
+@font-face{font-family:'Inter';src:url('../assets/fonts/inter-latin-wght-italic.woff2') format('woff2');font-weight:100 900;font-style:italic}
+@font-face{font-family:'Inter';src:url('../assets/fonts/inter-latin-ext-wght-normal.woff2') format('woff2');font-weight:100 900;font-style:normal;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Noto Sans Hebrew';src:url('../assets/fonts/noto-sans-hebrew-hebrew-400-normal.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'Noto Sans Hebrew';src:url('../assets/fonts/noto-sans-hebrew-hebrew-500-normal.woff2') format('woff2');font-weight:500}
+@font-face{font-family:'Noto Sans Hebrew';src:url('../assets/fonts/noto-sans-hebrew-hebrew-600-normal.woff2') format('woff2');font-weight:600}
+@font-face{font-family:'Noto Sans Hebrew';src:url('../assets/fonts/noto-sans-hebrew-hebrew-700-normal.woff2') format('woff2');font-weight:700}
+@font-face{font-family:'Noto Sans Hebrew';src:url('../assets/fonts/noto-sans-hebrew-hebrew-800-normal.woff2') format('woff2');font-weight:800}
+
+html,body{margin:0;background:#14163e;overflow:hidden}
+#quadro{position:relative;overflow:hidden;font-family:'Inter','Noto Sans Hebrew',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;font-kerning:normal;
+  /* cores adaptativas (o main.js troca entre texto claro e escuro conforme o céu) */
+  --ink:#fff;--dim:rgba(255,255,255,.34);--translit:#cfe3ff;--traducao:#ffe7a3;--glow:rgba(255,214,240,.95);
+  --k1:#ffc4e1;--k2:#ffe9ad;--veu:rgba(24,20,84,.38);--u:1}
+#cena{position:absolute;left:0;top:0}
+#veu{position:absolute;inset:0;opacity:0;pointer-events:none}
+
+/* ---------- legenda ---------- */
+#legenda{position:absolute;inset:0;pointer-events:none}
+.estrofe{position:absolute;inset:0;visibility:hidden}
+.linha{position:absolute;left:8%;top:0;width:84%;text-align:center;transform-origin:50% 50%;color:var(--ink)}
+.principal{font-weight:700;font-size:calc(var(--u)*92px);line-height:1.18;letter-spacing:-.022em}
+.linha.he .principal{font-size:calc(var(--u)*96px);letter-spacing:0;line-height:1.34}
+.linha.he .translit{font-size:calc(var(--u)*36px)}
+.linha.he .traducao{font-size:calc(var(--u)*40px)}
+.pal{position:relative;display:inline-block;margin:0 .14em;white-space:pre}
+.pal .base{color:var(--dim)}
+.pal .luz,.pal .brilho{position:absolute;left:0;top:0;white-space:pre}
+.pal .luz{color:var(--ink)}
+.pal .brilho{color:var(--glow);filter:blur(calc(var(--u)*14px));opacity:0}
+.pal.dest .luz{background:linear-gradient(100deg,var(--k1),var(--k2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.translit{font-style:italic;font-weight:500;font-size:calc(var(--u)*40px);color:var(--translit);margin-top:.22em;letter-spacing:.01em}
+.traducao{font-weight:600;font-size:calc(var(--u)*44px);color:var(--traducao);margin-top:.14em}
+
+/* ---------- abertura (uma por música; as cores mudam por variáveis para fundos claros) ---------- */
+#quadro{--ab-cor:#fff;--ab-sombra:rgba(40,30,110,.55);--ab-he1:#fff2cc;--ab-he2:#ffd6ac;--ab-he3:#ffc4dc;--ab-he-sombra:rgba(70,40,130,.5);
+  --ab-tr:#e4f2ff;--ab-tr-sombra:rgba(40,30,110,.7);--ab-tr-sombra2:rgba(40,30,110,.3);
+  --ab-vers-bg:rgba(52,42,120,.30);--ab-vers-borda:rgba(255,255,255,.38);--ab-vers-brilho:rgba(255,255,255,.45);--ab-vers-sombra:rgba(50,30,120,.25);--ab-vers:#ffe7a3;
+  --ab-fio:rgba(255,255,255,.75);--ab-canal-sombra:rgba(30,20,90,.5);--ab-aviso:rgba(224,240,255,.92);--ab-aviso-sombra:rgba(30,20,90,.55)}
+.abertura{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;visibility:hidden;color:var(--ab-cor);text-align:center;padding-top:calc(var(--u)*72px);box-sizing:border-box}
+.ab-bloco{display:flex;flex-direction:column;align-items:center}
+.ab-titulo{display:flex;font-weight:800;font-size:calc(var(--u)*112px);letter-spacing:.14em;line-height:1.1;text-shadow:0 4px 44px var(--ab-sombra)}
+.ab-l{display:inline-block;will-change:transform}
+.ab-he{font-family:'Noto Sans Hebrew','Inter',sans-serif;font-weight:700;font-size:calc(var(--u)*84px);line-height:1.4;margin-top:.1em}
+.ab-he span{display:inline-block;background:linear-gradient(100deg,var(--ab-he1),var(--ab-he2) 60%,var(--ab-he3));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 16px var(--ab-he-sombra))}
+.ab-tr{font-style:italic;font-weight:500;font-size:calc(var(--u)*36px);color:var(--ab-tr);margin-top:.1em;letter-spacing:.02em;text-shadow:0 2px 20px var(--ab-tr-sombra),0 0 3px var(--ab-tr-sombra2)}
+.ab-vers{margin-top:calc(var(--u)*22px);padding:calc(var(--u)*9px) calc(var(--u)*28px);border-radius:999px;background:var(--ab-vers-bg);
+  border:1px solid var(--ab-vers-borda);box-shadow:inset 0 1.5px 0 var(--ab-vers-brilho),0 10px 40px var(--ab-vers-sombra);
+  font-weight:600;font-size:calc(var(--u)*30px);color:var(--ab-vers);letter-spacing:.04em}
+.ab-linha{width:calc(var(--u)*220px);height:2px;background:linear-gradient(90deg,transparent,var(--ab-fio),transparent);margin-top:calc(var(--u)*42px)}
+.ab-canal{margin-top:calc(var(--u)*20px);font-weight:600;font-size:calc(var(--u)*34px);letter-spacing:.2em;text-shadow:0 2px 26px var(--ab-canal-sombra)}
+.ab-aviso{margin-top:calc(var(--u)*16px);font-weight:400;font-size:calc(var(--u)*20px);line-height:1.55;color:var(--ab-aviso);text-shadow:0 1px 14px var(--ab-aviso-sombra)}
+
+/* ---------- conferência: hora e número da linha no canto ---------- */
+#hud{display:none;position:absolute;left:calc(var(--u)*28px);bottom:calc(var(--u)*22px);font-weight:500;font-size:calc(var(--u)*22px);letter-spacing:.06em;color:rgba(255,255,255,.5)}
+
+/* ---------- selo dos Reels: "Completo no YouTube - Or Israel" ---------- */
+#selo{display:none;position:absolute;left:50%;bottom:calc(var(--u)*640px);white-space:nowrap;align-items:center;gap:calc(var(--u)*22px);
+  padding:calc(var(--u)*18px) calc(var(--u)*40px) calc(var(--u)*18px) calc(var(--u)*22px);border-radius:999px;color:#fff;
+  background:linear-gradient(135deg,rgba(58,40,110,.86),rgba(96,52,104,.82));border:calc(var(--u)*2.5px) solid rgba(255,255,255,.55);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 calc(var(--u)*16px) calc(var(--u)*50px) rgba(48,24,88,.45);
+  font-weight:700;font-size:calc(var(--u)*56px);letter-spacing:.005em;transform-origin:50% 50%;will-change:transform,opacity}
+#selo .yt{display:flex;align-items:center;justify-content:center;width:calc(var(--u)*98px);height:calc(var(--u)*70px);border-radius:calc(var(--u)*18px);
+  background:#ff2f45;box-shadow:0 0 calc(var(--u)*26px) rgba(255,70,90,.7)}
+#selo .yt i{display:block;width:0;height:0;margin-left:calc(var(--u)*6px);border-style:solid;border-width:calc(var(--u)*18px) 0 calc(var(--u)*18px) calc(var(--u)*30px);border-color:transparent transparent transparent #fff}
+#selo .of{color:#ffe7a3}
+
+/* ---------- acabamento ---------- */
+#grao{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.06;pointer-events:none;background-size:256px 256px}
+#fade{position:absolute;inset:0;background:#14163e;opacity:1;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="quadro">
+  <canvas id="cena"></canvas>
+  <div id="veu"></div>
+  <div id="legenda"></div>
+  <div id="abertura" class="abertura"></div>
+  <div id="hud"></div>
+  <div id="selo"></div>
+  <div id="grao"></div>
+  <div id="fade"></div>
+</div>
+<script src="util.js"></script>
+<script src="paleta.js"></script>
+<script src="personagens.js"></script>
+<script src="cena.js"></script>
+<script src="lago.js"></script>
+<script src="tema-aguas.js"></script>
+<script src="tema-correntes.js"></script>
+<script src="salmo91-seres.js"></script>
+<script src="salmo91.js"></script>
+<script src="salmo23-seres.js"></script>
+<script src="salmo23.js"></script>
+<script src="painosso-seres.js"></script>
+<script src="painosso.js"></script>
+<script src="bencao-seres.js"></script>
+<script src="bencao.js"></script>
+<script src="legenda.js"></script>
+<script src="abertura.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

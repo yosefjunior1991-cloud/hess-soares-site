@@ -1,0 +1,8 @@
+# A música, a letra e os vídeos ficam FORA do repositório (público): direitos autorais reservados.
+work/
+out/
+data/
+node_modules/
+*.mp4
+*.m4a
+*.wav
