@@ -184,6 +184,24 @@ Gatilhos em `animacao.json`: `ben`, `gua`, `ros`, `gra`, `lev`, `paz`, `shalom`,
 node tools/renderizar.cjs --musica $MUS/bencao-sacerdotal --temas bencao --crf 25 --tune animation --saida out/bencao-sacerdotal_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Salmo 2 (`--temas salmo2`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/salmo2.js` e `src/salmo2-seres.js`). Sião, o monte santo,
+com o Templo no alto e a luz do céu sobre ele. **Deus e o Ungido não são retratados como pessoas**: só luz, uma coroa e um cetro.
+
+- uma coroa de ouro desce na luz e é ungida com óleo de luz (o Rei estabelecido);
+- reis e povos se levantam com lanças, bandeiras e correntes e uma tempestade se arma, mas o monte não se abala (cúpula de luz e onda dourada);
+- a luz sobe de cima, com uma pomba, a cada vez que o Filho é declarado; as nações vêm como herança (cidades distantes que se acendem e peregrinos a caminho);
+- o cetro de luz quebra as lanças, as bandeiras e o poder da rebelião; os reis tiram as coroas e se ajoelham; as correntes se rompem, com pombas e pétalas;
+- no fim, os que confiam, sob a noite de estrelas e lanternas que sobem e viram estrelas.
+
+Gatilhos em `animacao.json`: `rei`, `monte`, `palavra`, `prop`, `reis`, `povos`, `reino`, `abalado`, `filho`, `pede`, `nacoes`, `confins`, `governa`,
+`quebraras`, `reinara`, `prud`, `instr`, `temor`, `tremor`, `cadeias`, `posic`, `beijem`, `ire`, `perecam`, `bem`, `confiam`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/salmo-2 --temas salmo2 --crf 25 --tune animation --saida out/salmo-2_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -216,6 +234,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/salmo23.js`, `src/salmo23-seres.js` | Tema do Salmo 23, desenhado do zero a partir da letra (cordeirinho, Pastor de luz, vale, mesa, cálice, casa de Adonai...). |
 | `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, o Templo de Jerusalém no horizonte). |
 | `src/bencao.js`, `src/bencao-seres.js` | Tema da Bênção Sacerdotal (sacerdote de frente, mãos da bênção, talit de luz, caravana, oásis, aurora, ponte, colina final com o povo). |
+| `src/salmo2.js`, `src/salmo2-seres.js` | Tema do Salmo 2 (Sião com o Templo, coroa e cetro de luz, reis e povos que se rebelam, tempestade, nações a caminho, reis que se ajoelham, correntes que se rompem). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
