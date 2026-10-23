@@ -1,0 +1,12 @@
+{
+  "file": "meu-video.mp4",
+  "title": "Título do vídeo | Hess & Soares Advogados",
+  "descriptionFile": "descricao.example.txt",
+  "tags": ["advogado", "direito", "Hess & Soares"],
+  "privacy": "private",
+  "publishAt": null,
+  "category": 27,
+  "language": "pt-BR",
+  "thumbnail": "capa.jpg",
+  "playlist": null
+}
