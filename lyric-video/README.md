@@ -202,6 +202,26 @@ Gatilhos em `animacao.json`: `rei`, `monte`, `palavra`, `prop`, `reis`, `povos`,
 node tools/renderizar.cjs --musica $MUS/salmo-2 --temas salmo2 --crf 25 --tune animation --saida out/salmo-2_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Um Menino Nos Nasceu (`--temas menino`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/menino.js` e `src/menino-seres.js`). Uma noite nas colinas de
+Belém: uma estrela, uma gruta e uma manjedoura onde **o Menino é uma trouxinha de luz, sem rosto**; Deus não é retratado, só luz.
+
+- a estrela e o feixe de luz sobre a gruta; a cada declaração do menino/filho a luz pulsa;
+- o manto e a coroa do governo sobre os ombros; os nomes (conselheiro, poderoso, eternidade, paz) como emblemas de luz, com a pomba e o ramo de oliveira;
+- pastores que chegam e se ajoelham; o povo que caminhava nas trevas, de lanternas apagadas, e a grande luz do amanhecer que as acende;
+- a alegria que se multiplica (pétalas), o jugo que se parte em luz e a multidão que chega em festa;
+- o trono de Davi com a lira, a cidade do Rei (Templo) que surge e a coroa que desce; ondas de luz a cada "sem fim"; a noite de estrelas e lanternas no fim.
+
+Gatilhos em `animacao.json`: `ki`, `ven`, `ombros`, `reinoEst`, `chamado`, `consel`, `poderoso`, `eternidade`, `paz`, `ombros2`, `nome`, `semfim`, `luz`,
+`trevas`, `escuridao`, `grandeluz`, `alegria`, `presenca`, `jugo`, `opressao`, `aumento`, `paz2`, `trono`, `reino2`, `governopaz`, `nao`, `rei`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/um-menino-nos-nasceu --temas menino --crf 25 --tune animation --saida out/um-menino-nos-nasceu_16x9.mp4
+```
+
+Obs.: ao trocar de música, use `--reanalisar` se o áudio novo for mais antigo que o `data/audio.json` (senão a duração da música anterior é reaproveitada).
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -235,6 +255,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/painosso.js`, `src/painosso-seres.js` | Tema do Pai Nosso em Aramaico (aldeia da Galileia, câmera que passeia pelo mundo, pessoas, casas, forno, poço, trigo, lanternas, o Templo de Jerusalém no horizonte). |
 | `src/bencao.js`, `src/bencao-seres.js` | Tema da Bênção Sacerdotal (sacerdote de frente, mãos da bênção, talit de luz, caravana, oásis, aurora, ponte, colina final com o povo). |
 | `src/salmo2.js`, `src/salmo2-seres.js` | Tema do Salmo 2 (Sião com o Templo, coroa e cetro de luz, reis e povos que se rebelam, tempestade, nações a caminho, reis que se ajoelham, correntes que se rompem). |
+| `src/menino.js`, `src/menino-seres.js` | Tema de Um Menino Nos Nasceu (Belém, estrela, gruta e manjedoura de luz, manto e coroa, emblemas dos nomes, pastores, grande luz, jugo que se parte, trono de Davi). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
