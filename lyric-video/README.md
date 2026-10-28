@@ -222,6 +222,35 @@ node tools/renderizar.cjs --musica $MUS/um-menino-nos-nasceu --temas menino --cr
 
 Obs.: ao trocar de música, use `--reanalisar` se o áudio novo for mais antigo que o `data/audio.json` (senão a duração da música anterior é reaproveitada).
 
+### Tema criado do zero a partir da letra: Estrela de Jacó (`--temas estrela`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/estrela.js`). Uma noite no deserto, no acampamento das tendas de Jacó:
+um vidente de pé numa rocha vê, de longe, uma estrela pequena que ainda não é agora. A promessa e a esperança sobem do chão; as lanças e bandeiras
+da força dos homens se desfazem diante da Palavra; a estrela se levanta de Jacó e sobe; um cetro de ouro se ergue de Israel e uma coroa de luz o
+encontra; a luz alcança as nações (cidades que se acendem), a aliança aparece como um arco de cores e o dia amanhece. **Deus não é retratado**: só luz.
+
+Usa `cortar_em` e `fade_audio` do `config.json` (a música encerra antes do fim do áudio, com um fade curto). Gatilhos em `animacao.json`: `vejo`, `contemplo`,
+`promessa`, `esperanca`, `forcas`, `poder`, `anunciado`, `palavra`, `estrelaJ`, `cetro`, `rei`, `virade`, `levanta`, `dominio`, `luzNacoes`, `promessaNao`, `alianca`,
+`falou`, `certamente`, `estrelaVira`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/estrela-de-jaco --temas estrela --crf 25 --tune animation --saida out/estrela-de-jaco_16x9.mp4
+```
+
+### Tema criado do zero a partir da letra: Isaías 41:10 (`--temas isaias`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/isaias.js` e `src/isaias-seres.js`). Um caminhante com uma lamparina atravessa a
+noite: o medo vem como nuvens escuras, a estrada se divide e ele não sabe qual seguir; ele levanta os olhos, as estrelas se abrem e a lamparina se acende com força.
+Uma mão de luz (a destra da justiça) desce do alto e uma orbe de presença o acompanha; quando as mãos tremem ele cai de joelhos e a mão de luz o levanta e o segura;
+uma árvore forte cresce ao seu lado; outros viajantes se juntam com lanternas; amanhece e todos chegam a um monte com o sol nascendo. **Deus não é retratado como pessoa.**
+
+Gatilhos em `animacao.json`: `altira`, `imcha`, `medo`, `noite`, `naosouber`, `caminho`, `olhos`, `quemtu`, `forca`, `esperanca`, `naoassustes`, `forta`, `ajuda`, `tremer`, `sustentaras`,
+`acabarem`, `levantaras`, `maodireita`, `justica`, `sozinho`, `comigo`, `eusou`, `sustentarei`, `commao`, `destra`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/isaias-41-10 --temas isaias --crf 25 --tune animation --saida out/isaias-41-10_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -256,6 +285,8 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/bencao.js`, `src/bencao-seres.js` | Tema da Bênção Sacerdotal (sacerdote de frente, mãos da bênção, talit de luz, caravana, oásis, aurora, ponte, colina final com o povo). |
 | `src/salmo2.js`, `src/salmo2-seres.js` | Tema do Salmo 2 (Sião com o Templo, coroa e cetro de luz, reis e povos que se rebelam, tempestade, nações a caminho, reis que se ajoelham, correntes que se rompem). |
 | `src/menino.js`, `src/menino-seres.js` | Tema de Um Menino Nos Nasceu (Belém, estrela, gruta e manjedoura de luz, manto e coroa, emblemas dos nomes, pastores, grande luz, jugo que se parte, trono de Davi). |
+| `src/estrela.js` | Tema de Estrela de Jacó (acampamento no deserto, vidente, estrela que sobe, cetro e coroa, aliança em arco de cores). |
+| `src/isaias.js`, `src/isaias-seres.js` | Tema de Isaías 41:10 (caminhante na noite, nuvens do medo, mão de luz, orbe de presença, árvore forte, viajantes que se juntam, amanhecer). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),

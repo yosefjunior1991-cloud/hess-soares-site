@@ -133,7 +133,9 @@ function lerParte(pastaP, inicio, indice) {
   }
   linhas.forEach((l) => { l.bloco += indice * 100000; });
 
-  const duracao = analise.duracao || Math.ceil(cues[cues.length - 1].fim + 8);
+  let duracao = analise.duracao || Math.ceil(cues[cues.length - 1].fim + 8);
+  if (Number(cfg.cortar_em) > 0) duracao = Math.min(duracao, Number(cfg.cortar_em));          // o autor encerra a música antes do fim do áudio
+  const fadeAudio = Number(cfg.fade_audio) || 0;
   const parte = {
     indice, nome, tema: temas[indice] || 'pastor',
     titulo: cfg.titulo || nome,
@@ -142,7 +144,7 @@ function lerParte(pastaP, inicio, indice) {
     versiculos: cfg.versiculos || '',
     canal: cfg.canal || '',
     aviso: (cfg.aviso_direitos || '').split('\n').filter(Boolean),
-    inicio, duracao,
+    inicio, duracao, fadeAudio,
     primeiraLinha: linhas[0].ini,
     bpm: analise.bpm || 100,
     primeiraBatida: analise.primeiraBatida || 0,
@@ -175,7 +177,7 @@ const musica = {
   nome: partes.map((p) => p.nome).join('+'),
   titulo: p0.titulo, tituloHebraico: p0.tituloHebraico, tituloTranslit: p0.tituloTranslit,
   versiculos: p0.versiculos, canal: p0.canal, aviso: p0.aviso,
-  duracao: inicio,
+  duracao: inicio, fadeAudio: p0.fadeAudio,
   primeiraLinha: linhas[0].ini,
   partes, linhas, estrofes,
 };

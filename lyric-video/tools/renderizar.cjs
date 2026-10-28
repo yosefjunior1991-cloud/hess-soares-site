@@ -204,10 +204,13 @@ async function modoVideo(porta, duracao) {
   const lista = path.join(WORK, 'lista.txt');
   fs.writeFileSync(lista, partes.map((p) => `file '${p}'`).join('\n'));
   const dur = ate - de;
+  let fadeA = 0;
+  try { fadeA = Number(JSON.parse(fs.readFileSync(path.join(DADOS, 'musica.json'), 'utf8')).fadeAudio) || 0; } catch (e) { /* sem fade pedido */ }
+  const afSaida = fadeA > 0 ? `afade=t=out:st=${Math.max(0, dur - fadeA).toFixed(2)}:d=${fadeA.toFixed(2)}` : `afade=t=out:st=${Math.max(0, dur - 1.4).toFixed(2)}:d=1.2`;
   const r = spawnSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', lista,
     '-ss', String(de), '-t', String(dur), '-i', audioArq, '-map', '0:v:0', '-map', '1:a:0',
     '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k',
-    '-af', `afade=t=in:st=0:d=0.6,afade=t=out:st=${Math.max(0, dur - 1.4).toFixed(2)}:d=1.2`,
+    '-af', `afade=t=in:st=0:d=0.6,${afSaida}`,
     '-movflags', '+faststart', '-shortest', saida], { stdio: 'inherit' });
   if (r.status !== 0) { console.error('falha ao unir/adicionar áudio'); process.exit(1); }
   const mb = fs.statSync(saida).size / 1048576;
