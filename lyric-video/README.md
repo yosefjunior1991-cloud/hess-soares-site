@@ -251,6 +251,20 @@ Gatilhos em `animacao.json`: `altira`, `imcha`, `medo`, `noite`, `naosouber`, `c
 node tools/renderizar.cjs --musica $MUS/isaias-41-10 --temas isaias --crf 25 --tune animation --saida out/isaias-41-10_16x9.mp4
 ```
 
+### Tema criado do zero a partir da letra: Seja Forte e Corajoso (`--temas josue`)
+
+Também com imagem preta, criado a partir da letra inteira, sempre em 16:9 (`src/josue.js` e `src/josue-seres.js`). Um líder com um cajado conduz o povo (com bandeiras das tribos)
+pela madrugada: a névoa e o medo cobrem o caminho até que uma voz de luz o faz prosseguir, e uma orbe de presença o acompanha. No refrão o rio se abre e o povo atravessa a seco;
+no leito sobem as doze pedras do memorial. À noite, um acampamento com o fogo e a Palavra; depois a marcha até a muralha, o som do shofar e a queda da muralha em poeira e luz;
+o povo entra na cidade ao amanhecer e o dia se levanta em festa. **Deus não é retratado**: só luz.
+
+Gatilhos em `animacao.json`: `olhar`, `caminho`, `medo`, `voz`, `comigo`, `presenca`, `amanha`, `guiara`, `chazak`, `naotemas`, `adonai`, `onde`, `naotemerei`, `noite`, `naosouber`,
+`palavra`, `ensina`, `naovoltar`, `promessa`, `deus`, `vencer`, `tuestas`, `naorecuarei`, `conduz`, `final`.
+
+```bash
+node tools/renderizar.cjs --musica $MUS/seja-forte-e-corajoso --temas josue --crf 25 --tune animation --saida out/seja-forte-e-corajoso_16x9.mp4
+```
+
 ### Cópia leve para compartilhar (limite de ~30 MB)
 
 O master 1080p de 5min20s com `--crf 23` fica em ~84 MB. Para mandar por chat/e-mail, gere uma cópia 720p
@@ -287,6 +301,7 @@ ffmpeg -y -i $M -vf scale=1280:720:flags=lanczos -c:v libx264 -preset medium -tu
 | `src/menino.js`, `src/menino-seres.js` | Tema de Um Menino Nos Nasceu (Belém, estrela, gruta e manjedoura de luz, manto e coroa, emblemas dos nomes, pastores, grande luz, jugo que se parte, trono de Davi). |
 | `src/estrela.js` | Tema de Estrela de Jacó (acampamento no deserto, vidente, estrela que sobe, cetro e coroa, aliança em arco de cores). |
 | `src/isaias.js`, `src/isaias-seres.js` | Tema de Isaías 41:10 (caminhante na noite, nuvens do medo, mão de luz, orbe de presença, árvore forte, viajantes que se juntam, amanhecer). |
+| `src/josue.js`, `src/josue-seres.js` | Tema de Seja Forte e Corajoso (marcha do povo, rio que se abre, doze pedras, acampamento, shofar, muralha que cai, entrada na cidade). |
 | `src/main.js` | Junta tudo: `window.__renderizar(t)` desenha o quadro do instante `t`. |
 
 **Determinismo:** cada quadro é uma função pura de `t` (sem `Math.random`, sem estado entre quadros),
