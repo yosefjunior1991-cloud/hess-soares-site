@@ -145,3 +145,11 @@ hora : topo / meio / horizonte
 5. Nada de frases da letra no código; tempos vêm dos gatilhos.
 6. Elementos importantes abaixo do texto; texto legível nos momentos claros e escuros.
 7. Renderizar quadros de revisão (`--still t1,t2,...`) de todos os momentos-chave antes do vídeo completo; usar `--reanalisar` ao trocar de música.
+8. Revisar a **leitura visual** de cada gesto, não só o desenho: nada que possa parecer uma cena indevida (ver seção 12).
+
+## 12. Lições de revisão do autor (a aplicar nas próximas músicas)
+
+- **Objetos nunca saem de um personagem.** Pedras, luz ou qualquer item que "nasce" debaixo/atrás de pessoas paradas lê-se como algo fisiológico. Memoriais, marcos e oferendas devem aparecer **no chão em outro ponto da cena** (na margem, num altar, trazidos nas mãos e depositados com gesto claro), longe dos pés/corpo dos personagens, com brilho de luz.
+- **Não parar o povo em pleno cenário de travessia/passagem.** Se o fundo é o leito de um rio aberto ou um caminho, o povo continua andando; o evento do memorial acontece **depois**, na margem.
+- **Paredes de água:** o efeito de abertura do rio precisa de mais forma (colunas verticais altas, topo ondulado, espuma e brilho, leito úmido); a primeira versão ficou estranha.
+- **Variar o cenário e o plano ao longo do clipe.** O mesmo grupo no mesmo lugar por muito tempo cansa, sobretudo no final. Nos últimos 30–40 s manter marcha, mudança de plano/ângulo, personagens entrando e saindo, rolagem do mundo ou câmera lenta (zoom/pan), nunca o grupo fixo.
