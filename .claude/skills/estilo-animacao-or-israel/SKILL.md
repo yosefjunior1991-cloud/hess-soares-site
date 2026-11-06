@@ -153,3 +153,13 @@ hora : topo / meio / horizonte
 - **Não parar o povo em pleno cenário de travessia/passagem.** Se o fundo é o leito de um rio aberto ou um caminho, o povo continua andando; o evento do memorial acontece **depois**, na margem.
 - **Paredes de água:** o efeito de abertura do rio precisa de mais forma (colunas verticais altas, topo ondulado, espuma e brilho, leito úmido); a primeira versão ficou estranha.
 - **Variar o cenário e o plano ao longo do clipe.** O mesmo grupo no mesmo lugar por muito tempo cansa, sobretudo no final. Nos últimos 30–40 s manter marcha, mudança de plano/ângulo, personagens entrando e saindo, rolagem do mundo ou câmera lenta (zoom/pan), nunca o grupo fixo.
+
+## 13. Variedade entre clipes (regra do autor)
+
+O mesmo canal publica vários clipes seguidos; se todos tiverem a mesma cena-base, parecem o mesmo vídeo. O Adon Olam (a partir do De Sião, que veio do Seja Forte) saiu "muito parecido": povo em fila, mesmos personagens, mesmas colinas, mesmos feixes de luz.
+
+- **Cada música nova precisa de uma cena-base própria**, escolhida pelo tema da letra, diferente da dos clipes anteriores (ver a tabela em `musicas/CLIPES.md` no repositório privado). Marcha de povo em fila (Josué, Sião) já foi usada: não repetir como cena principal.
+- **Alternativas de composição** já prontas ou fáceis: roda de dança em círculo sobre um monte olhando para a luz (Adon Olam), cosmos com planetas e coroa, refúgio na rocha sob tempestade, acampamento noturno em panorâmica, travessia de rio, campo de pastoreio, cidade com muralha, interior de casa (mesa, pão), céu aberto com estrelas.
+- **Reuso só de peças, nunca da cena inteira.** Reaproveitar céu por hora do dia, terreno, personagens e feixes é bom para economizar, mas a **disposição dos personagens, o plano da câmera e o cenário principal** mudam a cada clipe (fila, roda, subida, repouso, voo, plano aberto).
+- Antes de renderizar, comparar os quadros de revisão com os do último clipe: se ao ver dois quadros lado a lado parecem do mesmo vídeo, trocar a composição.
+- Para formações alternativas, não deixar o grupo parado nem marchando em fila o tempo todo: alternar formações (fila, roda, semicírculo, dispersos) e movimentar a câmera (zoom lento, panorâmica).
