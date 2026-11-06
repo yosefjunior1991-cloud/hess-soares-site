@@ -63,6 +63,7 @@
     const pulso = (t0, sobe, desce, t) => win(t0 - 0.1, t0 + sobe, t0 + sobe + 0.5, t0 + sobe + desce, t);
     const pulsos = (arr, sobe, desce, t) => arr.reduce((m, t0) => Math.max(m, pulso(t0, sobe, desce, t)), 0);
     const tSit = tRochaAf - 1.5, tIni2 = tDescansa + 2, tAcorda = tPert + 1;
+    const ADW = [[tCoro[0] - 0.5, tUniv[0] + 13], [tCoro[2] - 0.5, tUniv[1] + 13], [tCoro[4] - 0.5, tSolo[0] + 8]];   // as rodas de adoração
     // fase da paisagem: 1 = o povo se reúne; 2 = depois do refúgio; 3 = depois da noite
     const faseEm = (tl) => (tl < tRedentor ? 1 : tl < tEntrego[0] - 1 ? 2 : 3);
 
@@ -82,8 +83,8 @@
 
     // ---------------------------------------------------------------- a marcha: o mundo rola sempre, só desacelera no refúgio e no acampamento
     const PASSO = 1 / 30, V = 105, TX = 640;
-    const KN = [[0, 0.3], [tPerm + 4, 0.3], [tGloria, 0.45], [tUniv[0], 0.45], [tRedentor - 4, 0.5], [tSit - 3, 0.5], [tSit + 3, 0.1], [tDescansa + 2, 0.1], [tIni2 + 3, 0.45], [tCoro[3], 0.4],
-      [tEntrego[0] - 5, 0.3], [tEntrego[0] + 2, 0.3], [tPert, 0.3], [tContigo + 1, 0.4], [tCoro[5], 0.5], [tSoEle[2], 0.45], [dur + 2, 0.4]].filter((k, i, a) => i === 0 || k[0] > a[i - 1][0]);
+    const KN = [[0, 0.3], [tPerm + 4, 0.3], [tGloria, 0.45], [ADW[0][0] + 2, 0.1], [ADW[0][1] - 1, 0.1], [ADW[0][1] + 1, 0.4], [tRedentor - 4, 0.5], [tSit - 3, 0.5], [tSit + 3, 0.1], [tDescansa + 2, 0.1], [tIni2 + 3, 0.45], [ADW[1][0] + 2, 0.1], [ADW[1][1] - 1, 0.1], [ADW[1][1] + 1, 0.3],
+      [tEntrego[0] - 5, 0.3], [tEntrego[0] + 2, 0.3], [tPert, 0.3], [tContigo + 1, 0.4], [ADW[2][0] + 2, 0.1], [ADW[2][1] - 1, 0.1], [dur + 2, 0.4]].filter((k, i, a) => i === 0 || k[0] > a[i - 1][0]);
     const velEm = (t) => {
       if (t <= KN[0][0]) return KN[0][1];
       for (let i = 0; i < KN.length - 1; i++) if (t < KN[i + 1][0]) return lerp(KN[i][1], KN[i + 1][1], smooth(KN[i][0], KN[i + 1][0], t));
@@ -98,8 +99,14 @@
       for (let i = 0; i < TXK.length - 1; i++) if (t < TXK[i + 1][0]) return lerp(TXK[i][1], TXK[i + 1][1], smooth(TXK[i][0], TXK[i + 1][0], t));
       return TXK[TXK.length - 1][1];
     };
+    const ANC = ADW.map(([a, b], k) => rolEm((a + b) / 2) + W * [0.64, 0.5, 0.6][k]);
+    const adoraInfo = (tl) => {
+      let m = { a: 0, u: 0, k: -1 };
+      ADW.forEach(([a, b], k) => { const al = win(a, a + 1.8, b - 2, b, tl); if (al > m.a) m = { a: al, u: clamp((tl - a) / (b - a)), k }; });
+      return m;
+    };
     const X_ROCHA = rolEm(tSit + 2) + TX + 270, X_CAMP = rolEm(tEntrego[0] + 6) + TX;
-    const zoomEm = (t) => 1 + 0.1 * smooth(tSit, tDescansa + 4, t) + 0.1 * smooth(tEntrego[0], tPert, t) * (1 - smooth(tPert, tPert + 4, t));
+    const zoomEm = (t) => 1 + 0.1 * adoraInfo(t).a * (1 - adoraInfo(t).u) + 0.1 * smooth(tSit, tDescansa + 4, t) + 0.1 * smooth(tEntrego[0], tPert, t) * (1 - smooth(tPert, tPert + 4, t));
     const tZ = [];  // (reservado)
     const ANG = 0;
 
@@ -355,12 +362,12 @@
     }
 
     // ---------------------------------------------------------------- a coroa de luz no céu da terra e os raios que descem sobre o povo
-    const CW = [[tCoro[0] - 0.5, tUniv[0] + 12.5], [tCoro[2] - 0.5, tUniv[1] + 13], [tCoro[4] - 0.5, tSolo[0] + 7]];
+    const CW = ADW;
     function coroaCeu(ctx, S) {
       for (const [t0, t1] of CW) {
         const a = win(t0, t0 + 1.8, t1 - 2, t1, S.tl);
         if (a < 0.02) continue;
-        const br = Math.max(pulsos([...tCoro, ...tUniv, ...tSoEle], 1, 4, S.tl), 0.25), x = S.W * 0.8, y = 560;
+        const br = Math.max(pulsos([...tCoro, ...tUniv, ...tSoEle], 1, 4, S.tl), 0.25), ai = adoraInfo(S.tl), x = ai.k >= 0 ? ANC[ai.k] - S.rol : S.W * 0.8, y = 690;
         for (let i = 0; i < 6; i++) facho(ctx, x, y + 40, x + (i - 2.5) * 260, SOLO + 30, 5, 34, (0.1 + 0.1 * br) * a, 0.6);
         S2.coroa(ctx, x, y + 30, 2.4, { alfa: a, brilho: br });
       }
@@ -382,21 +389,22 @@
       const andar = clamp(0.55 + vel), alegria = Math.max(win(tCoro[0] - 0.5, tCoro[0] + 1.5, tUniv[0] + 12, tUniv[0] + 14, tl), win(tCoro[2] - 0.5, tCoro[2] + 1.5, tUniv[1] + 12, tUniv[1] + 14, tl), win(tCoro[4] - 0.5, tCoro[4] + 1.5, tSolo[0] + 6, tSolo[0] + 8, tl)) * 0.9;
       const noiteL = S.noite > 0.45, tempestade = S.storm > 0.3;
       const gA = fase === 1 ? smooth(tPerm + 1.5, tPerm + 5, tl) * (1 - smooth(tRedentor - 5, tRedentor - 2.5, tl)) : fase === 2 ? 1 - smooth(tEntrego[0] - 6, tEntrego[0] - 3, tl) : 1;
-      if (gA > 0.01) {
+      const adr = adoraInfo(tl).a;
+      if (gA * (1 - adr) > 0.01) {
         MEMBROS.forEach((m, i) => {
           const te = fase === 1 ? m.t0 : fase === 2 ? tIni2 + 0.35 * i : tContigo - 0.5 + 0.35 * i;
           if (tl < te) return;
           const e = ease.inOutSine(smooth(te, te + 8, tl)), x = lerp(-260, tx + m.slot, e), y = CY + m.y;
-          const opc = { tipo: m.tipo, cor: H(m.cor), dir: 1, andar, fase: ((S.rol + x + 17 * i) / 92) * TAU, t: S.t, olhar: 0.25 + 0.5 * alegria, bracos: alegria * (0.5 + 0.5 * Math.sin(S.t * 3 + i)), barba: m.barba, alfa: gA };
+          const opc = { tipo: m.tipo, cor: H(m.cor), dir: 1, andar, fase: ((S.rol + x + 17 * i) / 92) * TAU, t: S.t, olhar: 0.25 + 0.5 * alegria, bracos: alegria * (0.5 + 0.5 * Math.sin(S.t * 3 + i)), barba: m.barba, alfa: gA * (1 - adr) };
           if (m.veu) { opc.veu = true; opc.manto = H('#fff5e0'); }
           if (noiteL || tempestade) { opc.segura = 'lanterna'; opc.acesa = clamp(S.noite * 1.4 - 0.1 + S.storm); }
           PN.pessoa(ctx, x, y, 1.0, opc);
-          if (m.band) S2.bandeira(ctx, x + 26, y + 2, 0.62, { alfa: gA * smooth(te + 4, te + 8, tl), t: S.t, vento: 0.3 + 0.2 * alegria, cor: H(m.band) });
+          if (m.band) S2.bandeira(ctx, x + 26, y + 2, 0.62, { alfa: gA * (1 - adr) * smooth(te + 4, te + 8, tl), t: S.t, vento: 0.3 + 0.2 * alegria, cor: H(m.band) });
         });
       }
       // o líder: caminha, abriga-se na rocha, descansa, dorme (peça própria) e acorda
       const dorme = smooth(tEntrego[0] - 1.5, tEntrego[0] + 0.5, tl) * (1 - smooth(tAcorda, tAcorda + 2, tl));
-      const lA = 1 - dorme;
+      const lA = (1 - dorme) * (1 - adr);
       if (lA > 0.01) {
         const ergue = Math.max(pulsos(tCoro, 0.8, 3.5, tl), 0.5 * alegria) * (1 - sentL);
         const opcL = { tipo: 'aldeao', cor: H('#c8d6f6'), barba: true, dir: 1, andar: andar * (1 - sentL), sentado: sentL, fase: ((S.rol + tx) / 92) * TAU, t: S.t, olhar: Math.max(0.3, ergue, alegria), bracos: ergue * 0.75, inclina: tempestade ? 0.1 * S.storm : 0, segura: noiteL ? 'lanterna' : null, acesa: clamp(S.noite * 1.3), alfa: lA };
@@ -408,6 +416,43 @@
         const cA2 = win(tDescansa - 0.3, tDescansa + 1.8, tIni2 + 3, tIni2 + 6, tl);               // o coração que descansa
         if (cA2 > 0.02) PN.coracao(ctx, tx + 4, CY - 78, 13, cA2, S.t);
       }
+    }
+
+    // ---------------------------------------------------------------- a roda de adoração: os povos dançam em círculo no alto do monte, sob a coroa de luz
+    const RODA = MEMBROS.map((m) => ({ tipo: m.tipo, cor: m.cor, veu: m.veu, barba: m.barba }));
+    RODA.push({ tipo: 'aldeao', cor: '#c8d6f6', veu: false, barba: true });
+    function adoracao(ctx, S) {
+      const inf = adoraInfo(S.tl);
+      if (inf.a < 0.02) return;
+      const tl = S.tl, u = inf.u, k = inf.k, cx = ANC[k] - S.rol, y0 = SOLO - 6, N = RODA.length;
+      const R0 = k === 0 ? lerp(300, 380, u) : k === 1 ? 400 : lerp(330, 460, u);
+      ctx.save(); ctx.globalAlpha *= inf.a;
+      const gr = ctx.createLinearGradient(0, y0 - 110, 0, y0 + 100);                         // o monte
+      gr.addColorStop(0, css(luzObj(S, '#dcebc9', 1))); gr.addColorStop(1, css(luzObj(S, '#bcd6ac', 1)));
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.ellipse(cx, y0, R0 + 130, 104, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = css(luzObj(S, '#a9c79a', 1), 0.3); ctx.beginPath(); ctx.ellipse(cx, y0 + 52, R0 + 130, 56, 0, 0, TAU); ctx.fill();
+      const flores = [K.rosa, K.luzOuro, K.lilas, K.luz];
+      for (let i = 0; i < 40; i++) { const a = hash1(i * 2.1) * TAU, rr = Math.sqrt(hash1(i * 5.3)); ctx.fillStyle = css(flores[i & 3], 0.85); ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rr * (R0 + 110), y0 + Math.sin(a) * rr * 90, 3, 0, TAU); ctx.fill(); }
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; brilhoRadial(ctx, cx, y0 - 20, R0 + 60, K.luzOuro, 0.2 + 0.15 * Math.max(0, Math.sin(tl * 1.3))); ctx.restore();
+      const nVis = lerp(7, N, smooth(0, 0.45, u)), noiteL = S.noite > 0.45;
+      const dois = k === 1, om = 0.34;
+      const lista = [];
+      for (let i = 0; i < N; i++) {
+        const anel = dois ? i % 2 : 0, n1 = dois ? Math.ceil(N / 2) : N, idx = dois ? Math.floor(i / 2) : i, nn = dois ? (anel ? Math.floor(N / 2) : n1) : N;
+        const sg = anel ? -1 : 1, R = anel ? R0 * 0.58 : R0, th = (idx / nn) * TAU + sg * om * (tl - ADW[k][0]) * (anel ? 1.2 : 1) + (anel ? 0.4 : 0);
+        lista.push({ i, th, R, sg, sn: Math.sin(th) });
+      }
+      lista.sort((a, b) => a.sn - b.sn);
+      for (const e of lista) {
+        const al = clamp(nVis - e.i);
+        if (al < 0.02) continue;
+        const x = cx + Math.cos(e.th) * e.R, y = y0 + e.sn * e.R * 0.17, sc = 0.92 + 0.2 * e.sn, vx = -e.sn * e.sg, m = RODA[e.i];
+        const opc = { tipo: m.tipo, cor: H(m.cor), dir: vx >= 0 ? 1 : -1, andar: 0.85, fase: ((om * S.t * e.R) / 92) * TAU + e.i, t: S.t, olhar: 0.9, bracos: 0.55 + 0.45 * Math.sin(S.t * 2.4 + e.i), barba: m.barba, alfa: al };
+        if (m.veu) { opc.veu = true; opc.manto = H('#fff5e0'); }
+        if (noiteL) { opc.segura = 'lanterna'; opc.acesa = clamp(S.noite * 1.4 - 0.1); }
+        PN.pessoa(ctx, x, y, sc, opc);
+      }
+      ctx.restore();
     }
 
     // ---------------------------------------------------------------- tempestade, rocha de refúgio, acampamento, estrelas cadentes
@@ -531,6 +576,7 @@
       acampamentoR(ctx, S);
       coroaCeu(ctx, S);
       raiosDoSol(ctx, S);
+      adoracao(ctx, S);
       povo(ctx, S);
       chuva(ctx, S);
       pombas(ctx, S);
